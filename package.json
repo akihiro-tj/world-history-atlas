@@ -17,8 +17,8 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "maplibre-gl": "^5.14.0",
-    "pmtiles": "^4.3.0",
+    "maplibre-gl": "^5.15.0",
+    "pmtiles": "^4.3.2",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-map-gl": "^8.1.0"
