@@ -58,7 +58,7 @@
       "kind": "city",
       "name": "キエフ",
       "coordinates": [30.523, 50.45],
-      "importance": 2,
+      "importance": 1,
       "description": "1240年にモンゴル軍に攻略されたキエフ公国の都。この征服でロシアは長い服属を経験した。"
     },
     {
@@ -75,7 +75,7 @@
       "name": "開封",
       "coordinates": [114.307, 34.799],
       "importance": 2,
-      "description": "金の都であったが、1233年にモンゴル軍に攻略され金は滅亡に追い込まれた。"
+      "description": "金の都であったが、1233年に開封が陥落し、翌1234年に金は滅亡した。"
     },
     {
       "id": "lin-an",
@@ -107,7 +107,7 @@
       "kind": "terrain",
       "terrainKind": "river",
       "name": "ヴォルガ川",
-      "coordinates": [49.122, 55.789],
+      "coordinates": [47.033, 47.244],
       "importance": 1,
       "description": "キプチャク=ハン国の中心を流れるヨーロッパ最長の大河。"
     }
