@@ -1,13 +1,23 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from './App';
 
-const fakeMap = vi.hoisted(() => ({
-  fitBounds: vi.fn(),
-  on: vi.fn(),
-  off: vi.fn(),
-}));
+const { fakeMap, mapHandlers } = vi.hoisted(() => {
+  const mapHandlers = new Map<string, (...args: unknown[]) => void>();
+  return {
+    mapHandlers,
+    fakeMap: {
+      fitBounds: vi.fn(),
+      on: vi.fn((event: string, handler: (...args: unknown[]) => void) => {
+        mapHandlers.set(event, handler);
+      }),
+      off: vi.fn((event: string) => {
+        mapHandlers.delete(event);
+      }),
+    },
+  };
+});
 
 vi.mock('../map/MapView', async () => {
   const { useEffect } = await import('react');
@@ -22,7 +32,26 @@ vi.mock('../map/MapView', async () => {
 });
 
 vi.mock('../map/FeatureMarkers', () => ({
-  FeatureMarkers: () => null,
+  FeatureMarkers: ({
+    features,
+    onSelectFeature,
+  }: {
+    features: readonly { id: string; name: string }[];
+    onSelectFeature: (id: string) => void;
+  }) => (
+    <>
+      {features.map((feature) => (
+        <button
+          key={feature.id}
+          type="button"
+          data-testid={`marker-${feature.id}`}
+          onClick={() => onSelectFeature(feature.id)}
+        >
+          {feature.name}
+        </button>
+      ))}
+    </>
+  ),
 }));
 
 vi.mock('../theme/fetch', () => ({
@@ -70,6 +99,7 @@ vi.mock('../theme/fetch', () => ({
 
 beforeEach(() => {
   fakeMap.fitBounds.mockClear();
+  mapHandlers.clear();
 });
 
 afterEach(() => {
@@ -135,5 +165,20 @@ describe('App', () => {
         duration: 800,
       }),
     );
+  });
+
+  it('マーカー選択後に地図の余白クリックで解説パネルが閉じる', async () => {
+    render(<App />);
+    await userEvent.click(
+      await screen.findByRole('button', { name: /古代オリエント/ }),
+    );
+    await userEvent.click(await screen.findByTestId('marker-babylon'));
+    expect(await screen.findByTestId('detail-panel')).toBeInTheDocument();
+
+    act(() => {
+      mapHandlers.get('click')?.();
+    });
+
+    expect(screen.queryByTestId('detail-panel')).not.toBeInTheDocument();
   });
 });
