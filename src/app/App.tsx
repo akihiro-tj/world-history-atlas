@@ -125,12 +125,6 @@ export function App() {
     (feature) => feature.id === selectedFeatureId,
   );
 
-  // 解説パネル（デスクトップ幅 320px）と重なって操作不能にならないよう、
-  // パネル表示中はフィルタをパネル幅ぶん左にずらす
-  const filterControlClassName = selectedFeature
-    ? 'absolute top-4 right-4 z-10 md:right-[21rem]'
-    : 'absolute top-4 right-4 z-10';
-
   return (
     <div className="flex h-dvh flex-col">
       <header className="flex items-center border-b border-slate-200 px-4 py-2">
@@ -164,7 +158,7 @@ export function App() {
             />
           )}
           {selection.status === 'loaded' && (
-            <div className={filterControlClassName}>
+            <div className="absolute top-4 left-4 z-10">
               <ImportanceFilterControl
                 value={importanceFilter}
                 onChange={setImportanceFilter}
