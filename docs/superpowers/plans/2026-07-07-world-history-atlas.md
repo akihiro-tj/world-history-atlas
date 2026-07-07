@@ -30,7 +30,7 @@
 
 ```
 world-history-atlas/
-├── flake.nix / flake.lock         # Task 2: タイルパイプライン devShell
+├── flake.nix / flake.lock         # Task 2: 開発用 devShell（tippecanoe, gdal, Node 24, pnpm）
 ├── package.json / pnpm-lock.yaml / pnpm-workspace.yaml   # Task 1 / minimumReleaseAge は Task 21
 ├── vite.config.ts / tsconfig.json / biome.json / index.html  # Task 1
 ├── wrangler.jsonc                 # Task 19
@@ -284,7 +284,12 @@ pnpm exec biome init
 {
   "formatter": { "indentStyle": "space", "indentWidth": 2 },
   "javascript": { "formatter": { "quoteStyle": "single" } },
-  "files": { "includes": ["**", "!public/tiles/**", "!.features-gen/**"] }
+  "files": { "includes": ["**", "!public/tiles", "!.features-gen"] }
+```
+
+除外はフォルダ形式（`/**` なし）で書く。`/**` 付きだと Biome が `useBiomeIgnoreFolder` 警告を出す。
+
+```jsonc
 }
 ```
 
@@ -348,7 +353,7 @@ git commit -m "chore: scaffold Vite + React + TypeScript + Tailwind project"
     {
       devShells = forAllSystems (pkgs: {
         default = pkgs.mkShell {
-          packages = [ pkgs.tippecanoe pkgs.gdal pkgs.curl pkgs.unzip ];
+          packages = [ pkgs.tippecanoe pkgs.gdal pkgs.curl pkgs.unzip pkgs.nodejs_24 pkgs.pnpm ];
         };
       });
     };
@@ -359,6 +364,7 @@ git commit -m "chore: scaffold Vite + React + TypeScript + Tailwind project"
 
 ```bash
 nix develop -c tippecanoe --version   # tippecanoe vX.Y.Z が表示される
+nix develop -c node --version         # v24.x が表示される（devShell が Node 24 を提供）
 nix develop -c ogr2ogr --version      # GDAL X.Y.Z が表示される
 ```
 

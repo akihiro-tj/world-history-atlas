@@ -46,13 +46,13 @@
 - Node は現時点の LTS（Node 24 系）を `engines` で固定する。浮動指定（`lts/*` など）にしない
 - パッケージマネージャは pnpm。`packageManager` フィールドでバージョン固定
 - 依存パッケージは最新安定版を採用し lockfile で固定する
-- タイル生成ツールチェーン（tippecanoe / gdal）は nix flake（`flake.nix` + `flake.lock`）で管理する。nix の適用範囲はタイルパイプラインに限定し、アプリ開発フロー（dev サーバー・テスト等）は nix に依存しない
+- 開発ツールチェーンは nix flake（`flake.nix` + `flake.lock`）の devShell で管理する。devShell はタイル生成ツール（tippecanoe / gdal）に加えて Node 24 系と pnpm を提供し、ローカル開発は devShell 経由を標準とする（`nix develop` 内で `pnpm dev` 等を実行）。CI は `actions/setup-node`（Node 24）を使い、nix を持ち込まない
 
 ### リポジトリ構成
 
 ```
 world-history-atlas/
-├── flake.nix / flake.lock    # タイルパイプライン用 devShell（tippecanoe, gdal）
+├── flake.nix / flake.lock    # 開発用 devShell（tippecanoe, gdal, Node 24, pnpm）
 ├── wrangler.jsonc            # Cloudflare Workers 設定
 ├── scripts/
 │   ├── build-tiles.sh        # ベースマップ PMTiles の生成（nix devShell 内で実行）
