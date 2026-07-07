@@ -1,0 +1,107 @@
+{
+  "id": "islamic-world",
+  "title": "イスラーム世界の成立と拡大",
+  "era": "610年〜1258年",
+  "summary": "ムハンマドの啓示に始まるイスラームが、正統カリフ〜ウマイヤ朝〜アッバース朝と拡大した。",
+  "bounds": [-12.0, 10.0, 65.0, 45.0],
+  "features": [
+    {
+      "id": "mecca",
+      "kind": "city",
+      "name": "メッカ",
+      "coordinates": [39.826, 21.422],
+      "importance": 1,
+      "description": "ムハンマドが預言者としての啓示を受けた地。イスラーム最大の聖地でカーバ神殿が置かれる。"
+    },
+    {
+      "id": "medina",
+      "kind": "city",
+      "name": "メディナ",
+      "coordinates": [39.611, 24.467],
+      "importance": 1,
+      "description": "622年、ムハンマドがヒジュラ（聖遷）を行った地。イスラーム共同体（ウンマ）が成立した。"
+    },
+    {
+      "id": "damascus",
+      "kind": "city",
+      "name": "ダマスクス",
+      "coordinates": [36.291, 33.51],
+      "importance": 1,
+      "description": "ウマイヤ朝の都。古代から東西交易路が交わる要衝として栄えた。"
+    },
+    {
+      "id": "baghdad",
+      "kind": "city",
+      "name": "バグダード",
+      "coordinates": [44.361, 33.313],
+      "importance": 1,
+      "description": "アッバース朝が762年に建設した円形の都。学問・商業の中心地として繁栄した。"
+    },
+    {
+      "id": "cairo",
+      "kind": "city",
+      "name": "カイロ",
+      "coordinates": [31.236, 30.044],
+      "importance": 1,
+      "description": "969年、ファーティマ朝が建設した都。アズハル学院を中心に学問の都として発展した。"
+    },
+    {
+      "id": "cordoba",
+      "kind": "city",
+      "name": "コルドバ",
+      "coordinates": [-4.779, 37.879],
+      "importance": 1,
+      "description": "後ウマイヤ朝の都。西方イスラーム世界における学術・文化の中心地として栄えた。"
+    },
+    {
+      "id": "jerusalem",
+      "kind": "city",
+      "name": "エルサレム",
+      "coordinates": [35.234, 31.773],
+      "importance": 2,
+      "description": "691年に岩のドームが建立された聖地。ユダヤ教・キリスト教・イスラーム共通の聖地でもある。"
+    },
+    {
+      "id": "kufa",
+      "kind": "city",
+      "name": "クーファ",
+      "coordinates": [44.44, 32.051],
+      "importance": 3,
+      "description": "アラブ軍の駐屯地として建設された都市。シーア派の形成に関わる地としても知られる。"
+    },
+    {
+      "id": "basra",
+      "kind": "city",
+      "name": "バスラ",
+      "coordinates": [47.783, 30.508],
+      "importance": 3,
+      "description": "ペルシア湾に近い軍営都市として建設された。インド洋交易の拠点として発展した。"
+    },
+    {
+      "id": "bukhara",
+      "kind": "city",
+      "name": "ブハラ",
+      "coordinates": [64.429, 39.775],
+      "importance": 2,
+      "description": "中央アジアのオアシス都市。ハディース学者ブハーリーやイブン=シーナーゆかりの地とされる。"
+    },
+    {
+      "id": "arabian-peninsula",
+      "kind": "terrain",
+      "terrainKind": "region",
+      "name": "アラビア半島",
+      "coordinates": [45.0, 24.0],
+      "importance": 2,
+      "description": "イスラーム発祥の地。乾燥した砂漠地帯にオアシス都市や隊商路が点在する。"
+    },
+    {
+      "id": "red-sea",
+      "kind": "terrain",
+      "terrainKind": "sea",
+      "name": "紅海",
+      "coordinates": [37.5, 20.0],
+      "importance": 2,
+      "description": "アラビア半島とアフリカを隔てる細長い海。メッカ巡礼や東西交易の航路として使われた。"
+    }
+  ]
+}
