@@ -1,0 +1,84 @@
+{
+  "id": "ancient-orient",
+  "title": "古代オリエント",
+  "era": "前3000年頃〜前330年",
+  "summary": "メソポタミアとエジプトに最古の都市文明が生まれ、統一帝国が興亡した。",
+  "bounds": [25.0, 22.0, 60.0, 42.0],
+  "features": [
+    {
+      "id": "babylon",
+      "kind": "city",
+      "name": "バビロン",
+      "coordinates": [44.421, 32.542],
+      "importance": 1,
+      "description": "ハンムラビ王の時代に栄えたメソポタミアの中心都市。新バビロニアの都となった。"
+    },
+    {
+      "id": "ur",
+      "kind": "city",
+      "name": "ウル",
+      "coordinates": [46.103, 30.961],
+      "importance": 2,
+      "description": "シュメール人の都市国家。ジッグラトの遺構が残る。"
+    },
+    {
+      "id": "uruk",
+      "kind": "city",
+      "name": "ウルク",
+      "coordinates": [45.636, 31.322],
+      "importance": 3,
+      "description": "シュメール最古級の都市国家。ギルガメシュ伝説の舞台とされる。"
+    },
+    {
+      "id": "nineveh",
+      "kind": "city",
+      "name": "ニネヴェ",
+      "coordinates": [43.153, 36.36],
+      "importance": 2,
+      "description": "アッシリア帝国後期の都。アッシュルバニパル王の図書館が置かれた。"
+    },
+    {
+      "id": "memphis",
+      "kind": "city",
+      "name": "メンフィス",
+      "coordinates": [31.251, 29.844],
+      "importance": 1,
+      "description": "古王国時代のエジプトの都。ナイル川下流域に位置する。"
+    },
+    {
+      "id": "thebes-egypt",
+      "kind": "city",
+      "name": "テーベ",
+      "coordinates": [32.639, 25.72],
+      "importance": 1,
+      "description": "中王国・新王国時代のエジプトの都。カルナック神殿が造営された。"
+    },
+    {
+      "id": "euphrates",
+      "kind": "terrain",
+      "terrainKind": "river",
+      "name": "ユーフラテス川",
+      "coordinates": [43.5, 34.5],
+      "importance": 1,
+      "description": "メソポタミア文明を育んだ大河。ティグリス川とともに肥沃な三日月地帯を形成した。"
+    },
+    {
+      "id": "tigris",
+      "kind": "terrain",
+      "terrainKind": "river",
+      "name": "ティグリス川",
+      "coordinates": [44.4, 34.9],
+      "importance": 1,
+      "description": "メソポタミア東部を流れる大河。流域にアッシリアの中心都市が栄えた。"
+    },
+    {
+      "id": "nile",
+      "kind": "terrain",
+      "terrainKind": "river",
+      "name": "ナイル川",
+      "coordinates": [30.8, 26.5],
+      "importance": 1,
+      "description": "エジプト文明を育んだ大河。定期的な氾濫が肥沃な耕地をもたらした。"
+    }
+  ]
+}

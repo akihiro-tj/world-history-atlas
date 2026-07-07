@@ -1,0 +1,59 @@
+{
+  "id": "ancient-greece",
+  "title": "古代ギリシア",
+  "era": "前800年頃〜前338年",
+  "summary": "エーゲ海周辺に多数のポリスが成立し、独自の文化が栄えた。",
+  "bounds": [19.0, 34.5, 28.5, 41.5],
+  "features": [
+    {
+      "id": "athens",
+      "kind": "city",
+      "name": "アテネ",
+      "coordinates": [23.727, 37.984],
+      "importance": 1,
+      "description": "ポリスの代表格。民主政が発達し、パルテノン神殿が建てられた。"
+    },
+    {
+      "id": "sparta",
+      "kind": "city",
+      "name": "スパルタ",
+      "coordinates": [22.43, 37.075],
+      "importance": 1,
+      "description": "軍国主義的な体制をとったポリス。ペロポネソス戦争でアテネと争った。"
+    },
+    {
+      "id": "delphi",
+      "kind": "city",
+      "name": "デルフォイ",
+      "coordinates": [22.501, 38.482],
+      "importance": 2,
+      "description": "アポロン神殿の神託で知られる聖地。"
+    },
+    {
+      "id": "olympia",
+      "kind": "city",
+      "name": "オリンピア",
+      "coordinates": [21.63, 37.638],
+      "importance": 2,
+      "description": "4年ごとの祭典競技（古代オリンピック）が開かれた聖地。"
+    },
+    {
+      "id": "aegean-sea",
+      "kind": "terrain",
+      "terrainKind": "sea",
+      "name": "エーゲ海",
+      "coordinates": [25.3, 38.5],
+      "importance": 1,
+      "description": "ギリシア本土と小アジアに挟まれた海。ポリスの交易と植民活動の舞台となった。"
+    },
+    {
+      "id": "peloponnesus",
+      "kind": "terrain",
+      "terrainKind": "region",
+      "name": "ペロポネソス半島",
+      "coordinates": [22.3, 37.5],
+      "importance": 2,
+      "description": "ギリシア南部の半島。スパルタなどの有力ポリスが位置した。"
+    }
+  ]
+}

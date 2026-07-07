@@ -1,0 +1,14 @@
+[
+  {
+    "id": "ancient-orient",
+    "title": "古代オリエント",
+    "era": "前3000年頃〜前330年",
+    "order": 1
+  },
+  {
+    "id": "ancient-greece",
+    "title": "古代ギリシア",
+    "era": "前800年頃〜前338年",
+    "order": 2
+  }
+]
