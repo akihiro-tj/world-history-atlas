@@ -58,10 +58,37 @@ describe('themeSchema', () => {
     expect(themeSchema.safeParse(theme).success).toBe(false);
   });
 
+  it('経度 180 / -180 ちょうどの座標を受理する', () => {
+    const theme = {
+      ...validTheme,
+      features: [
+        { ...validCity, coordinates: [180, 0] },
+        { ...validTerrain, coordinates: [-180, 0] },
+      ],
+    };
+    expect(themeSchema.safeParse(theme).success).toBe(true);
+  });
+
+  it('緯度が範囲外なら拒否する', () => {
+    const theme = {
+      ...validTheme,
+      features: [{ ...validCity, coordinates: [0, 91] }],
+    };
+    expect(themeSchema.safeParse(theme).success).toBe(false);
+  });
+
   it('importance が 1..3 以外なら拒否する', () => {
     const theme = {
       ...validTheme,
       features: [{ ...validCity, importance: 4 }],
+    };
+    expect(themeSchema.safeParse(theme).success).toBe(false);
+  });
+
+  it('importance 0 を拒否する', () => {
+    const theme = {
+      ...validTheme,
+      features: [{ ...validCity, importance: 0 }],
     };
     expect(themeSchema.safeParse(theme).success).toBe(false);
   });
@@ -74,11 +101,32 @@ describe('themeSchema', () => {
     expect(themeSchema.safeParse(theme).success).toBe(false);
   });
 
+  it('description がちょうど 120 文字なら受理する', () => {
+    const theme = {
+      ...validTheme,
+      features: [{ ...validCity, description: 'あ'.repeat(120) }],
+    };
+    expect(themeSchema.safeParse(theme).success).toBe(true);
+  });
+
   it('west >= east の bounds を拒否する', () => {
     expect(
       themeSchema.safeParse({ ...validTheme, bounds: [60, 22, 25, 42] })
         .success,
     ).toBe(false);
+  });
+
+  it('west === east の bounds を拒否する', () => {
+    expect(
+      themeSchema.safeParse({ ...validTheme, bounds: [25, 22, 25, 42] })
+        .success,
+    ).toBe(false);
+  });
+
+  it('テーマに未知キーがあると拒否する', () => {
+    expect(themeSchema.safeParse({ ...validTheme, extra: 1 }).success).toBe(
+      false,
+    );
   });
 
   it('テーマ内のフィーチャー id 重複を拒否する', () => {
@@ -105,6 +153,11 @@ describe('themeIndexSchema', () => {
 
   it('order が整数でなければ拒否する', () => {
     const index = [{ id: 'a', title: 'A', era: 'era', order: 1.5 }];
+    expect(themeIndexSchema.safeParse(index).success).toBe(false);
+  });
+
+  it('エントリに未知キーがあると拒否する', () => {
+    const index = [{ id: 'a', title: 'A', era: 'era', order: 1, extra: 1 }];
     expect(themeIndexSchema.safeParse(index).success).toBe(false);
   });
 });
