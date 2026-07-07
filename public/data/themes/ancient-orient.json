@@ -58,7 +58,7 @@
       "kind": "terrain",
       "terrainKind": "river",
       "name": "ユーフラテス川",
-      "coordinates": [43.5, 34.5],
+      "coordinates": [42.8, 33.6],
       "importance": 1,
       "description": "メソポタミア文明を育んだ大河。ティグリス川とともに肥沃な三日月地帯を形成した。"
     },
@@ -67,7 +67,7 @@
       "kind": "terrain",
       "terrainKind": "river",
       "name": "ティグリス川",
-      "coordinates": [44.4, 34.9],
+      "coordinates": [43.9, 34.2],
       "importance": 1,
       "description": "メソポタミア東部を流れる大河。流域にアッシリアの中心都市が栄えた。"
     },
@@ -76,7 +76,7 @@
       "kind": "terrain",
       "terrainKind": "river",
       "name": "ナイル川",
-      "coordinates": [30.8, 26.5],
+      "coordinates": [31.7, 26.5],
       "importance": 1,
       "description": "エジプト文明を育んだ大河。定期的な氾濫が肥沃な耕地をもたらした。"
     }

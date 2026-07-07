@@ -107,6 +107,57 @@ describe('validateThemeData', () => {
     ).toEqual([]);
   });
 
+  it('同名フィーチャーの非先頭ペア間の座標ズレも error', () => {
+    const themeA = makeTheme({
+      bounds: [-1, -1, 50, 50],
+      features: [
+        {
+          id: 'city-a',
+          kind: 'city',
+          name: '都市A',
+          coordinates: [0, 0],
+          importance: 1,
+          description: '解説。',
+        },
+      ],
+    });
+    const themeB = makeTheme({
+      id: 'theme-b',
+      bounds: [-1, -1, 50, 50],
+      features: [
+        {
+          id: 'city-a2',
+          kind: 'city',
+          name: '都市A',
+          coordinates: [0.09, 0],
+          importance: 1,
+          description: '解説。',
+        },
+      ],
+    });
+    const themeC = makeTheme({
+      id: 'theme-c',
+      bounds: [-1, -1, 50, 50],
+      features: [
+        {
+          id: 'city-a3',
+          kind: 'city',
+          name: '都市A',
+          coordinates: [-0.09, 0],
+          importance: 1,
+          description: '解説。',
+        },
+      ],
+    });
+    const issues = validateThemeData(
+      makeIndex('theme-a', 'theme-b', 'theme-c'),
+      [themeA, themeB, themeC],
+    );
+    expect(
+      issues.some((i) => i.level === 'error' && i.message.includes('都市A')),
+    ).toBe(true);
+  });
+
   it('bounds 外のフィーチャーは warning', () => {
     const theme = makeTheme({
       features: [

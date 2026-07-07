@@ -71,19 +71,19 @@ function checkSameNameCoordinates(themes: Theme[]): ValidationIssue[] {
   }
   const issues: ValidationIssue[] = [];
   for (const [name, entries] of byName) {
-    const [first, ...rest] = entries;
-    if (!first) continue;
-    for (const entry of rest) {
-      const lonGap = Math.abs(first.coordinates[0] - entry.coordinates[0]);
-      const latGap = Math.abs(first.coordinates[1] - entry.coordinates[1]);
-      if (
-        lonGap >= COORDINATE_MISMATCH_THRESHOLD ||
-        latGap >= COORDINATE_MISMATCH_THRESHOLD
-      ) {
-        issues.push({
-          level: 'error',
-          message: `「${name}」の座標がテーマ間で食い違っている（${first.themeId} と ${entry.themeId}）`,
-        });
+    for (const [i, base] of entries.entries()) {
+      for (const other of entries.slice(i + 1)) {
+        const lonGap = Math.abs(base.coordinates[0] - other.coordinates[0]);
+        const latGap = Math.abs(base.coordinates[1] - other.coordinates[1]);
+        if (
+          lonGap >= COORDINATE_MISMATCH_THRESHOLD ||
+          latGap >= COORDINATE_MISMATCH_THRESHOLD
+        ) {
+          issues.push({
+            level: 'error',
+            message: `「${name}」の座標がテーマ間で食い違っている（${base.themeId} と ${other.themeId}）`,
+          });
+        }
       }
     }
   }
