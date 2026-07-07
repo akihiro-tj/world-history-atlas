@@ -393,11 +393,11 @@ for layer in "${LAYERS[@]}"; do
   [ -f "$zip" ] || curl -fL "$BASE_URL/$layer.zip" -o "$zip"
 done
 
-if [ -s scripts/tile-sources.sha256 ]; then
-  (cd "$CACHE_DIR" && shasum -a 256 -c "$OLDPWD/scripts/tile-sources.sha256")
-else
-  echo "WARN: scripts/tile-sources.sha256 が未生成。検証をスキップした" >&2
+if [ ! -s scripts/tile-sources.sha256 ]; then
+  echo "ERROR: scripts/tile-sources.sha256 がない。ソースを意図的に更新する場合は .cache/naturalearth/ の zip から再生成してコミットする（README 参照）" >&2
+  exit 1
 fi
+(cd "$CACHE_DIR" && shasum -a 256 -c "$OLDPWD/scripts/tile-sources.sha256")
 
 for layer in "${LAYERS[@]}"; do
   unzip -o "$CACHE_DIR/$layer.zip" -d "$BUILD_DIR/$layer" >/dev/null
@@ -423,7 +423,7 @@ echo "OK: $OUT ($size bytes)"
 - [ ] **Step 4: checksums を記録**
 
 ```bash
-nix develop -c scripts/build-tiles.sh   # 初回: WARN が出るが生成は成功する
+nix develop -c scripts/build-tiles.sh   # 初回: ダウンロード後、checksums 未生成の ERROR で停止する
 (cd .cache/naturalearth && shasum -a 256 *.zip) > scripts/tile-sources.sha256
 nix develop -c scripts/build-tiles.sh   # 2 回目: チェックサム検証込みで成功する
 ```
@@ -3699,6 +3699,8 @@ nix develop -c pnpm tiles:build
 \`\`\`
 
 生成物 \`public/tiles/basemap.pmtiles\`（25 MiB 未満）はリポジトリにコミットする。
+ダウンロード元を意図的に更新する場合は、取得済み zip から \`scripts/tile-sources.sha256\` を
+再生成してコミットする（\`(cd .cache/naturalearth && shasum -a 256 *.zip) > scripts/tile-sources.sha256\`）。
 
 ## デプロイ
 
