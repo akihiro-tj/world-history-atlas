@@ -162,7 +162,10 @@ export function App() {
           type="button"
           aria-label="テーマ一覧を開く"
           aria-expanded={isDrawerOpen}
-          onClick={() => setIsDrawerOpen(true)}
+          onClick={() => {
+            setSelectedFeatureId(undefined);
+            setIsDrawerOpen(true);
+          }}
           className="mr-2 rounded p-2 hover:bg-slate-100 md:hidden dark:hover:bg-slate-700"
         >
           ☰
@@ -183,6 +186,7 @@ export function App() {
             type="button"
             aria-label="テーマ一覧を閉じる"
             onClick={() => setIsDrawerOpen(false)}
+            // Warning: left-64 は aside の w-64 と一致させること。ずれるとバックドロップがドロワー本体に重なり、クリック領域が壊れる
             className="absolute inset-y-0 right-0 left-64 z-20 bg-black/40 md:hidden"
           />
         )}

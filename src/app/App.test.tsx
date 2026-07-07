@@ -276,4 +276,19 @@ describe('App', () => {
     await userEvent.click(menuButton);
     expect(menuButton).toHaveAttribute('aria-expanded', 'true');
   });
+
+  it('ドロワーを開くと解説パネルが閉じる', async () => {
+    render(<App />);
+    await userEvent.click(
+      await screen.findByRole('button', { name: /古代オリエント/ }),
+    );
+    await userEvent.click(await screen.findByTestId('marker-babylon'));
+    expect(await screen.findByTestId('detail-panel')).toBeInTheDocument();
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'テーマ一覧を開く' }),
+    );
+
+    expect(screen.queryByTestId('detail-panel')).not.toBeInTheDocument();
+  });
 });
