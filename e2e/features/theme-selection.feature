@@ -1,4 +1,3 @@
-@wip
 Feature: テーマ選択
 
   Background:

@@ -1,7 +1,12 @@
 import type maplibregl from 'maplibre-gl';
 import { useCallback, useEffect, useState } from 'react';
+import { FeatureMarkers } from '../map/FeatureMarkers';
 import { MapView } from '../map/MapView';
 import { fetchTheme, fetchThemeIndex } from '../theme/fetch';
+import {
+  filterFeaturesByImportance,
+  type ImportanceFilter,
+} from '../theme/filter';
 import { Sidebar } from '../theme/Sidebar';
 import type { Theme, ThemeIndexEntry } from '../theme/schema';
 import {
@@ -33,9 +38,14 @@ export function App() {
     status: 'none',
   });
   const [map, setMap] = useState<maplibregl.Map | null>(null);
+  const [importanceFilter] = useState<ImportanceFilter>(3);
+  const [selectedFeatureId, setSelectedFeatureId] = useState<
+    string | undefined
+  >(undefined);
 
   const selectTheme = useCallback(
     (themeId: string, options?: { fallbackToNoneOnError: boolean }) => {
+      setSelectedFeatureId(undefined);
       setSelection({ status: 'loading', themeId });
       syncThemeToUrl(themeId);
       void fetchTheme(themeId).then((result) => {
@@ -90,6 +100,11 @@ export function App() {
         ? undefined
         : selection.themeId;
 
+  const visibleFeatures =
+    selection.status === 'loaded'
+      ? filterFeaturesByImportance(selection.theme.features, importanceFilter)
+      : [];
+
   return (
     <div className="flex h-dvh flex-col">
       <header className="flex items-center border-b border-slate-200 px-4 py-2">
@@ -110,6 +125,12 @@ export function App() {
         </aside>
         <main className="relative min-w-0 flex-1">
           <MapView colorTheme="light" onMapReady={setMap} />
+          <FeatureMarkers
+            map={map}
+            features={visibleFeatures}
+            selectedFeatureId={selectedFeatureId}
+            onSelectFeature={setSelectedFeatureId}
+          />
           {selection.status === 'none' && (
             <p
               data-testid="empty-state"

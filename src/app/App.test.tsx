@@ -17,6 +17,10 @@ vi.mock('../map/MapView', async () => {
   };
 });
 
+vi.mock('../map/FeatureMarkers', () => ({
+  FeatureMarkers: () => null,
+}));
+
 vi.mock('../theme/fetch', () => ({
   fetchThemeIndex: async () => ({
     ok: true,
