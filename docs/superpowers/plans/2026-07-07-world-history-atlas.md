@@ -285,13 +285,10 @@ pnpm exec biome init
   "formatter": { "indentStyle": "space", "indentWidth": 2 },
   "javascript": { "formatter": { "quoteStyle": "single" } },
   "files": { "includes": ["**", "!public/tiles", "!.features-gen"] }
+}
 ```
 
 除外はフォルダ形式（`/**` なし）で書く。`/**` 付きだと Biome が `useBiomeIgnoreFolder` 警告を出す。
-
-```jsonc
-}
-```
 
 - [ ] **Step 5: 失敗するテストを書く**
 
@@ -365,6 +362,9 @@ git commit -m "chore: scaffold Vite + React + TypeScript + Tailwind project"
 ```bash
 nix develop -c tippecanoe --version   # tippecanoe vX.Y.Z が表示される
 nix develop -c node --version         # v24.x が表示される（devShell が Node 24 を提供）
+nix develop -c pnpm install           # Node 24 の実行環境で依存を解決できる
+nix develop -c pnpm test && nix develop -c pnpm typecheck && nix develop -c pnpm lint
+# ↑ Node 24 上でツールチェーン全体が動くことの統合検証（Task 1 は Node 26 環境で検証されたため、ここがゲート）
 nix develop -c ogr2ogr --version      # GDAL X.Y.Z が表示される
 ```
 
