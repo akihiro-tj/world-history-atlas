@@ -18,7 +18,9 @@
     "format": "biome format --write .",
     "validate-data": "tsx scripts/validate-data.ts",
     "tiles:build": "scripts/build-tiles.sh",
-    "deploy:cf": "pnpm build && wrangler deploy"
+    "deploy:cf": "pnpm build && wrangler deploy",
+    "e2e": "bddgen --tags \"not @wip\" && playwright test",
+    "e2e:smoke": "bddgen --tags \"@smoke and not @wip\" && playwright test"
   },
   "dependencies": {
     "maplibre-gl": "^5.24.0",
@@ -29,6 +31,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.2",
+    "@playwright/test": "^1.61.1",
     "@tailwindcss/vite": "^4.3.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -38,6 +41,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
     "jsdom": "^29.1.1",
+    "playwright-bdd": "^9.2.0",
     "tailwindcss": "^4.3.2",
     "tsx": "^4.23.0",
     "typescript": "^6.0.3",
