@@ -1,0 +1,115 @@
+{
+  "id": "mongol-empire",
+  "title": "モンゴル帝国と東西交流",
+  "era": "1206年〜1368年",
+  "summary": "チンギス=ハンが建てたモンゴル帝国がユーラシア大陸に広がり、東西交流が活発化した。",
+  "bounds": [20.0, 20.0, 130.0, 58.0],
+  "features": [
+    {
+      "id": "karakorum",
+      "kind": "city",
+      "name": "カラコルム",
+      "coordinates": [102.819, 47.192],
+      "importance": 1,
+      "description": "オゴタイ=ハンが建設したモンゴル帝国の都。ユーラシア各地からの使節や商人が集まった。"
+    },
+    {
+      "id": "dadu",
+      "kind": "city",
+      "name": "大都",
+      "coordinates": [116.407, 39.904],
+      "importance": 1,
+      "description": "フビライ=ハンが建設した元の都。現在の北京にあたり、マルコ=ポーロも訪れたとされる。"
+    },
+    {
+      "id": "baghdad",
+      "kind": "city",
+      "name": "バグダード",
+      "coordinates": [44.361, 33.313],
+      "importance": 1,
+      "description": "1258年、フラグの率いる軍に攻略されアッバース朝が滅んだ都市。"
+    },
+    {
+      "id": "samarkand",
+      "kind": "city",
+      "name": "サマルカンド",
+      "coordinates": [66.97, 39.652],
+      "importance": 2,
+      "description": "中央アジアのオアシス都市。チャガタイ=ハン国のもとで東西交易路の要衝として栄えた。"
+    },
+    {
+      "id": "bukhara",
+      "kind": "city",
+      "name": "ブハラ",
+      "coordinates": [64.429, 39.775],
+      "importance": 3,
+      "description": "1220年、チンギス=ハンの軍に攻略された中央アジアのオアシス都市。"
+    },
+    {
+      "id": "moscow",
+      "kind": "city",
+      "name": "モスクワ",
+      "coordinates": [37.618, 55.756],
+      "importance": 2,
+      "description": "キプチャク=ハン国の支配下でロシア諸侯の中心地の一つとなった都市。「タタールのくびき」の時代を経た。"
+    },
+    {
+      "id": "kiev",
+      "kind": "city",
+      "name": "キエフ",
+      "coordinates": [30.523, 50.45],
+      "importance": 2,
+      "description": "1240年にモンゴル軍に攻略されたキエフ公国の都。この征服でロシアは長い服属を経験した。"
+    },
+    {
+      "id": "sarai",
+      "kind": "city",
+      "name": "サライ",
+      "coordinates": [47.435, 47.181],
+      "importance": 1,
+      "description": "キプチャク=ハン国（ジョチ=ウルス）の都。ヴォルガ川下流に置かれた。"
+    },
+    {
+      "id": "kaifeng",
+      "kind": "city",
+      "name": "開封",
+      "coordinates": [114.307, 34.799],
+      "importance": 2,
+      "description": "金の都であったが、1233年にモンゴル軍に攻略され金は滅亡に追い込まれた。"
+    },
+    {
+      "id": "lin-an",
+      "kind": "city",
+      "name": "臨安",
+      "coordinates": [120.161, 30.294],
+      "importance": 1,
+      "description": "南宋の都。1276年にフビライの軍に占領され、1279年に南宋は滅亡した。"
+    },
+    {
+      "id": "tabriz",
+      "kind": "city",
+      "name": "タブリーズ",
+      "coordinates": [46.292, 38.08],
+      "importance": 2,
+      "description": "イル=ハン国の都。東西交易路の要衝として繁栄した。"
+    },
+    {
+      "id": "gobi-desert",
+      "kind": "terrain",
+      "terrainKind": "desert",
+      "name": "ゴビ砂漠",
+      "coordinates": [105.0, 42.0],
+      "importance": 2,
+      "description": "モンゴル高原南部に広がる砂漠。モンゴル民族の故地に近い。"
+    },
+    {
+      "id": "volga-river",
+      "kind": "terrain",
+      "terrainKind": "river",
+      "name": "ヴォルガ川",
+      "coordinates": [49.122, 55.789],
+      "importance": 1,
+      "description": "キプチャク=ハン国の中心を流れるヨーロッパ最長の大河。"
+    }
+  ]
+}
