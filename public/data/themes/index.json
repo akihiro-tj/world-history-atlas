@@ -18,6 +18,12 @@
     "order": 3
   },
   {
+    "id": "ancient-india",
+    "title": "古代インド",
+    "era": "前2600年頃〜後550年",
+    "order": 4
+  },
+  {
     "id": "islamic-world",
     "title": "イスラーム世界の成立と拡大",
     "era": "610年〜1258年",
