@@ -39,7 +39,7 @@
 - スキーマ検証: zod（スキーマを型の一次情報とする）
 - テスト: Vitest / React Testing Library / Playwright + playwright-bdd
 - Lint・Format: Biome
-- 配信: Cloudflare Workers の静的アセット（設定は `wrangler.jsonc` でリポジトリ内管理）
+- 配信: Cloudflare Workers（アプリは静的アセット、PMTiles・テーマ JSON は R2 バインディング経由。設定は `wrangler.jsonc` でリポジトリ内管理）
 
 ### 技術方針
 
@@ -76,14 +76,18 @@ world-history-atlas/
 
 ### データ配信方式
 
-- ベースマップ（PMTiles）は静的アセットとして配信し、クライアントが HTTP Range request で部分取得する
-- テーマデータ（JSON）は起動時・テーマ選択時に fetch する（ビルドバンドルに含めない）
+- アプリ本体（HTML / JS / CSS）は Cloudflare Workers の静的アセットとして配信する（Vite が content hash でフィンガープリントし immutable キャッシュ）
+- **ベースマップ（PMTiles）とテーマデータ（JSON）は R2 バケットに置き、単一 Worker が R2 バインディング経由で配信する**。R2 は HTTP Range request（206 Partial Content）をネイティブ対応するため、PMTiles プロトコルが必要とする部分取得が成立する（Cloudflare Workers 静的アセットは Range を honor せず 200 で全ファイルを返すため PMTiles では使えないことを実機検証で確認済み。Protomaps 公式も R2 配信を推奨）
+- **content hash によるキャッシュバスティング**: `public/tiles/basemap.pmtiles` と `public/data/themes/*.json` はハッシュなしの原本として repo に置く（dev / E2E はこれを直接使う）。デプロイ時に各ファイルの content hash を計算し、`basemap-<hash>.pmtiles` / `<id>-<hash>.json` として R2 にアップロードする。R2 由来のレスポンスは `Cache-Control: public, max-age=31536000, immutable` で配信する
+- アプリは起動時に `asset-manifest.json`（論理名 → ハッシュ付きキーの対応表。静的アセットとして短期キャッシュで配信）を fetch し、PMTiles とテーマ JSON のハッシュ付き URL を解決する。dev ではマニフェストがローカルのハッシュなしパスを指すため R2 なしで動作する
 
-### 前提条件と検証（Cloudflare Workers 静的アセット）
+### アーキテクチャ（単一 Worker）
 
-- 1 ファイル 25 MiB 上限がある。`basemap.pmtiles` はこの上限内に収める（CI で検証）
-- PMTiles の動作には Range request（206 Partial Content）対応が必要。2026 年 4 月に対応済みとみられるが、**実装初期に実機検証タスクを置く**: デプロイした `basemap.pmtiles` に対し curl で Range request を送り 206 応答を確認し、実アプリでタイルが描画されることを確認する
-- **フォールバック基準**: 上記検証で 206 が返らない、または MapLibre からのタイル取得が成立しない場合、tippecanoe の出力を z/x/y ディレクトリ形式（個別 .pbf ファイル群）に切り替えて静的配信する。テーマデータの設計・UI には影響しない
+- `wrangler.jsonc` に Worker スクリプト（`main`）、静的アセットの binding、R2 バケットの binding を設定する
+- Worker は R2 配信パス（`/r2/*` 等）への GET を R2 から取得して Range 対応 + immutable キャッシュで返し、それ以外のリクエストは静的アセット binding へ委譲する
+- デプロイは「Vite ビルド → ハッシュ計算 → R2 へアップロード → マニフェスト生成 → Worker デプロイ」を 1 コマンドで行う。設定はすべて `wrangler.jsonc` とスクリプトでリポジトリ内管理する
+- R2 バケットの作成と、CI の `CLOUDFLARE_API_TOKEN` への R2 書き込み権限付与が必要（手動作業）
+- `basemap.pmtiles` は Cloudflare Workers 静的アセットの 1 ファイル 25 MiB 上限の影響を受けない（R2 に置くため）が、生成物のサイズは CI で検証する
 
 ## データモデル
 

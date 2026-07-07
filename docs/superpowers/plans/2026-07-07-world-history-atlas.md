@@ -3383,66 +3383,45 @@ git commit -m "fix: correct theme data based on fact-check review"   # 修正が
 
 ---
 
-### Task 19: Cloudflare デプロイ + Range request 実機検証【要ユーザー対話: wrangler 認証】
+### Task 19: R2 + 単一 Worker デプロイ（PMTiles を Range 対応で配信）【要ユーザー対話: wrangler 認証・R2 バケット】
+
+実機検証で Cloudflare Workers 静的アセットが Range request を honor せず（200 で全ファイル返却）PMTiles が動作しないことが判明したため、Protomaps 公式推奨の R2 配信に切り替える。単一 Worker が静的アセット（アプリ）と R2（PMTiles・テーマ JSON）を配信する。
 
 **Files:**
-- Create: `wrangler.jsonc`
+- Create: `wrangler.jsonc`、`src/worker/index.ts`（Worker スクリプト）、`scripts/asset-manifest.ts`（ハッシュ計算 + マニフェスト生成）、`scripts/deploy-r2.ts`（R2 アップロード）、`public/asset-manifest.json`（dev 用・ローカルパス）、`src/data/manifest.ts`（マニフェスト fetch + 型）
+- Modify: `src/theme/fetch.ts`（URL をマニフェストから受け取る）、`src/map/mapStyle.ts`（pmtiles URL をマニフェストから受け取る）、`src/app/App.tsx`（起動時にマニフェスト fetch）、`package.json`（deploy:cf を R2 アップロード込みに）
 
 **Interfaces:**
-- Consumes: `pnpm build` の `dist/`（Task 1）、`public/tiles/basemap.pmtiles`（Task 2）
-- Produces: 本番 URL（`https://world-history-atlas.<account>.workers.dev`）。Task 21 のワークフローは同じ wrangler.jsonc を使う
+- `AssetManifest = { basemap: string; themeIndex: string; themes: Record<string, string> }`
+- Produces: 本番 URL（`https://world-history-atlas.<account>.workers.dev`）。PMTiles への Range request が 206 で返る
 
-- [ ] **Step 1: wrangler.jsonc を作成**
+**設計方針:**
+- 原本 `public/tiles/basemap.pmtiles` と `public/data/themes/*.json` はハッシュなしで repo に残す（dev / E2E はこれを直接使う）
+- `public/asset-manifest.json`（dev 用）はローカルパスを指す: `{ "basemap": "/tiles/basemap.pmtiles", "themeIndex": "/data/themes/index.json", "themes": { "<id>": "/data/themes/<id>.json", ... } }`
+- デプロイ時: 各ファイルの content hash（sha256 先頭 16 桁等）を計算し `basemap-<hash>.pmtiles` / `<id>-<hash>.json` として R2 にアップロード、`/r2/<hashed>` を指す本番マニフェストを `dist/asset-manifest.json` に生成
+- Worker: `/r2/*` の GET は R2 から Range 対応で取得し `Cache-Control: public, max-age=31536000, immutable` で返す。それ以外は静的アセット binding へ委譲
+- アプリは起動時に `/asset-manifest.json` を fetch し、以降 pmtiles・テーマ JSON のアクセスにマニフェストの URL を使う。dev ではローカルパスなので R2 なしで動く（E2E の `**/data/themes/**` route も従来どおり効く）
 
-```jsonc
-{
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "world-history-atlas",
-  "compatibility_date": "2026-07-01",
-  "assets": {
-    "directory": "./dist",
-    "not_found_handling": "single-page-application"
-  },
-  "preview_urls": true
-}
-```
+- [ ] **Step 1: R2 バケット作成【要ユーザー対話】**
 
-アセットのみの Worker（Worker スクリプトなし）。`compatibility_date` は実装日の日付に更新する。
+`wrangler r2 bucket create world-history-atlas-tiles`（ユーザーの Cloudflare アカウントに作成）。認証は `wrangler login` または `CLOUDFLARE_API_TOKEN`（R2 書き込み権限込み）。
 
-- [ ] **Step 2: 【要ユーザー対話】Cloudflare 認証**
+- [ ] **Step 2: Worker スクリプト・wrangler.jsonc・マニフェスト・スクリプト群を実装**
 
-手動デプロイには Cloudflare アカウントの認証が必要。ユーザーに `! npx wrangler login`（ブラウザ認証）を実行してもらうか、`CLOUDFLARE_API_TOKEN` 環境変数の設定を依頼する。**認証が完了するまで次の Step に進まない。**
+`wrangler.jsonc`（`main` + `assets` binding + `r2_buckets` binding、`compatibility_date` は実装日）。`src/worker/index.ts` は `/r2/<key>` を R2 の `env.BUCKET.get(key, { range })` で Range 対応配信、それ以外を `env.ASSETS.fetch()` へ委譲。マニフェスト生成・R2 アップロードスクリプト。アプリ統合（マニフェスト fetch → fetch/mapStyle への URL 注入）。dev / E2E（`pnpm test` `pnpm e2e`）が green のままであることを確認。
 
-- [ ] **Step 3: 手動デプロイ**
+- [ ] **Step 3: デプロイと 206 実機検証**
+
+`pnpm deploy:cf`（ビルド → R2 アップロード → Worker デプロイ）。検証:
 
 ```bash
-pnpm deploy:cf
+URL="https://world-history-atlas.<account>.workers.dev/r2/basemap-<hash>.pmtiles"
+curl -sI -H "Range: bytes=0-16383" "$URL"    # HTTP/2 206 と content-range を確認
 ```
 
-Expected: `Deployed world-history-atlas` と URL が表示される。
+playwright-cli で本番 URL を開き、ベースマップ（陸地・海岸線・河川）が描画されること、テーマ選択 → マーカー → 解説パネルの動線、SPA 深いパス（`/?theme=ancient-orient`）を確認。206 が返らない/描画されない場合はブロック報告。
 
-- [ ] **Step 4: Range request 実機検証（スペックの前提条件の検証）**
-
-```bash
-URL="https://world-history-atlas.<account>.workers.dev/tiles/basemap.pmtiles"
-curl -sI -H "Range: bytes=0-16383" "$URL" | head -8
-```
-
-Expected: `HTTP/2 206` と `content-range: bytes 0-16383/<総バイト数>` が返る。
-
-さらに playwright-cli で本番 URL を開き、以下を確認する:
-- 地図タイルが描画される（Network タブで `basemap.pmtiles` への 206 応答が複数飛んでいる）
-- テーマ選択 → マーカー表示 → 解説パネルの動線が動く
-- SPA の深いパス（`/?theme=ancient-orient`）を直接開いてもアプリが表示される
-
-**206 が返らない・タイルが描画されない場合**: 作業を止めてブロックとして報告し、ユーザーとフォールバック（tippecanoe の z/x/y ディレクトリ出力 + 通常 GET 配信への切替。スペックの「前提条件と検証」参照）への切替を判断する。
-
-- [ ] **Step 5: コミット**
-
-```bash
-git add wrangler.jsonc
-git commit -m "feat: add Cloudflare Workers deployment config"
-```
+- [ ] **Step 4: コミット**（`wrangler.jsonc` / worker / scripts / アプリ変更を明示パスで）
 
 ---
 
