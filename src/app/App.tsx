@@ -3,6 +3,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FeatureMarkers } from '../map/FeatureMarkers';
 import { MapView } from '../map/MapView';
 import type { ColorTheme } from '../map/mapColors';
+import { ErrorView } from '../shared/ErrorView';
+import { isWebgl2Supported } from '../shared/webgl';
 import { DetailPanel } from '../theme/DetailPanel';
 import { fetchTheme, fetchThemeIndex } from '../theme/fetch';
 import {
@@ -79,20 +81,22 @@ export function App() {
     [],
   );
 
-  useEffect(() => {
-    let isCancelled = false;
+  const loadThemeIndex = useCallback(() => {
+    setIndexState({ status: 'loading' });
     void fetchThemeIndex().then((result) => {
-      if (isCancelled) return;
       setIndexState(
         result.ok
           ? { status: 'loaded', entries: result.value }
           : { status: 'error' },
       );
     });
-    return () => {
-      isCancelled = true;
-    };
   }, []);
+
+  useEffect(() => {
+    loadThemeIndex();
+  }, [loadThemeIndex]);
+
+  const [isWebglAvailable] = useState(() => isWebgl2Supported());
 
   useEffect(() => {
     const initialThemeId = parseThemeIdFromSearch(window.location.search);
@@ -170,11 +174,23 @@ export function App() {
             />
           )}
           {indexState.status === 'error' && (
-            <p className="p-4 text-sm">データの取得に失敗しました</p>
+            <div className="p-4">
+              <ErrorView
+                message="データの取得に失敗しました"
+                onRetry={loadThemeIndex}
+              />
+            </div>
           )}
         </aside>
         <main className="relative min-w-0 flex-1">
-          <MapView colorTheme={colorTheme} onMapReady={setMap} />
+          {isWebglAvailable ? (
+            <MapView colorTheme={colorTheme} onMapReady={setMap} />
+          ) : (
+            <p className="flex h-full items-center justify-center p-8 text-center text-sm">
+              お使いのブラウザは WebGL2
+              に対応していないため、地図を表示できません。最新のブラウザでお試しください。
+            </p>
+          )}
           <FeatureMarkers
             map={map}
             features={visibleFeatures}
@@ -204,12 +220,12 @@ export function App() {
             </p>
           )}
           {selection.status === 'error' && (
-            <p
-              data-testid="theme-error"
-              className="absolute top-4 left-1/2 -translate-x-1/2 rounded bg-white/90 px-4 py-2 text-sm shadow dark:bg-slate-800/90"
-            >
-              テーマの読み込みに失敗しました
-            </p>
+            <div className="absolute top-4 left-1/2 z-10 -translate-x-1/2">
+              <ErrorView
+                message="テーマの読み込みに失敗しました"
+                onRetry={() => selectTheme(selection.themeId)}
+              />
+            </div>
           )}
         </main>
       </div>

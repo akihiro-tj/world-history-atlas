@@ -1,6 +1,7 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { fetchThemeIndex } from '../theme/fetch';
 import { App } from './App';
 
 const { fakeMap, mapHandlers } = vi.hoisted(() => {
@@ -18,6 +19,10 @@ const { fakeMap, mapHandlers } = vi.hoisted(() => {
     },
   };
 });
+
+vi.mock('../shared/webgl', () => ({
+  isWebgl2Supported: () => true,
+}));
 
 vi.mock('../map/MapView', async () => {
   const { useEffect } = await import('react');
@@ -55,7 +60,7 @@ vi.mock('../map/FeatureMarkers', () => ({
 }));
 
 vi.mock('../theme/fetch', () => ({
-  fetchThemeIndex: async () => ({
+  fetchThemeIndex: vi.fn(async () => ({
     ok: true,
     value: [
       {
@@ -71,8 +76,8 @@ vi.mock('../theme/fetch', () => ({
         order: 2,
       },
     ],
-  }),
-  fetchTheme: async (id: string) =>
+  })),
+  fetchTheme: vi.fn(async (id: string) =>
     id === 'ancient-orient'
       ? {
           ok: true,
@@ -95,6 +100,7 @@ vi.mock('../theme/fetch', () => ({
           },
         }
       : { ok: false, error: { type: 'network' } },
+  ),
 }));
 
 beforeEach(() => {
@@ -146,7 +152,24 @@ describe('App', () => {
     await userEvent.click(
       await screen.findByRole('button', { name: /壊れたテーマ/ }),
     );
-    expect(await screen.findByTestId('theme-error')).toBeInTheDocument();
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'テーマの読み込みに失敗しました',
+    );
+  });
+
+  it('テーマ一覧の取得失敗でエラービューが出て、再試行で回復する', async () => {
+    vi.mocked(fetchThemeIndex).mockResolvedValueOnce({
+      ok: false,
+      error: { type: 'network' },
+    });
+    render(<App />);
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'データの取得に失敗しました',
+    );
+    await userEvent.click(screen.getByRole('button', { name: '再試行' }));
+    expect(
+      await screen.findByRole('button', { name: /古代オリエント/ }),
+    ).toBeInTheDocument();
   });
 
   it('不正な直リンクは未選択にフォールバックし URL から theme を除去する', async () => {
