@@ -24,6 +24,12 @@
     "order": 4
   },
   {
+    "id": "chinese-dynasties",
+    "title": "中国王朝（秦漢〜隋唐）",
+    "era": "前221年〜後907年",
+    "order": 5
+  },
+  {
     "id": "islamic-world",
     "title": "イスラーム世界の成立と拡大",
     "era": "610年〜1258年",
