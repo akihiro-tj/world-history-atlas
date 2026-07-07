@@ -79,6 +79,70 @@
       "coordinates": [31.7, 26.5],
       "importance": 1,
       "description": "エジプト文明を育んだ大河。定期的な氾濫が肥沃な耕地をもたらした。"
+    },
+    {
+      "id": "giza",
+      "kind": "city",
+      "name": "ギザ",
+      "coordinates": [31.134, 29.979],
+      "importance": 1,
+      "description": "古王国時代に巨大なピラミッドが築かれた地。クフ王のピラミッドが代表的である。"
+    },
+    {
+      "id": "jerusalem",
+      "kind": "city",
+      "name": "エルサレム",
+      "coordinates": [35.234, 31.773],
+      "importance": 1,
+      "description": "ヘブライ人の王国の都。ソロモン王が神殿を建てたが、のちバビロン捕囚で王国は滅んだ。"
+    },
+    {
+      "id": "tyre",
+      "kind": "city",
+      "name": "ティルス",
+      "coordinates": [35.203, 33.272],
+      "importance": 2,
+      "description": "フェニキア人の代表的な港市。地中海交易と植民市建設の拠点となった。"
+    },
+    {
+      "id": "hattusa",
+      "kind": "city",
+      "name": "ハットゥシャ",
+      "coordinates": [34.615, 40.02],
+      "importance": 2,
+      "description": "ヒッタイト王国の都。鉄製の武器と戦車を用いてオリエントに進出した。"
+    },
+    {
+      "id": "susa",
+      "kind": "city",
+      "name": "スサ",
+      "coordinates": [48.258, 32.189],
+      "importance": 2,
+      "description": "エラム王国の都として栄え、のちアケメネス朝ペルシアの行政上の中心地となった。"
+    },
+    {
+      "id": "persepolis",
+      "kind": "city",
+      "name": "ペルセポリス",
+      "coordinates": [52.89, 29.934],
+      "importance": 1,
+      "description": "ダレイオス1世が造営したアケメネス朝ペルシアの儀礼上の都。アレクサンドロス大王に焼かれた。"
+    },
+    {
+      "id": "pasargadae",
+      "kind": "city",
+      "name": "パサルガダエ",
+      "coordinates": [53.167, 30.19],
+      "importance": 2,
+      "description": "アケメネス朝を開いたキュロス2世が定めた都で、その墓が今も残る。"
+    },
+    {
+      "id": "ecbatana",
+      "kind": "city",
+      "name": "エクバタナ",
+      "coordinates": [48.515, 34.799],
+      "importance": 2,
+      "description": "メディア王国の都。のちアケメネス朝ペルシアの夏の都ともなった。"
     }
   ]
 }
