@@ -54,6 +54,70 @@
       "coordinates": [22.3, 37.5],
       "importance": 2,
       "description": "ギリシア南部の半島。スパルタなどの有力ポリスが位置した。"
+    },
+    {
+      "id": "corinth",
+      "kind": "city",
+      "name": "コリントス",
+      "coordinates": [22.881, 37.907],
+      "importance": 2,
+      "description": "地峡に位置する交易の要衝。ペロポネソス同盟に加わりスパルタ側でアテネと戦った。"
+    },
+    {
+      "id": "thebes-greece",
+      "kind": "city",
+      "name": "テーバイ",
+      "coordinates": [23.318, 38.32],
+      "importance": 2,
+      "description": "ボイオティア地方の有力ポリス。エパメイノンダスの指導下でスパルタを破り一時覇権を握った。"
+    },
+    {
+      "id": "pella",
+      "kind": "city",
+      "name": "ペラ",
+      "coordinates": [22.518, 40.754],
+      "importance": 2,
+      "description": "マケドニア王国の都。アレクサンドロス大王が生まれた地とされる。"
+    },
+    {
+      "id": "marathon",
+      "kind": "city",
+      "name": "マラトン",
+      "coordinates": [23.974, 38.118],
+      "importance": 1,
+      "description": "前490年、第1回ペルシア戦争でアテネ軍がペルシア軍を撃退した古戦場。"
+    },
+    {
+      "id": "thermopylae",
+      "kind": "city",
+      "name": "テルモピュレ",
+      "coordinates": [22.558, 38.805],
+      "importance": 1,
+      "description": "前480年、スパルタ王レオニダスの軍が玉砕した狭隘な峠。第2回ペルシア戦争の激戦地。"
+    },
+    {
+      "id": "troy",
+      "kind": "city",
+      "name": "トロイア",
+      "coordinates": [26.238, 39.957],
+      "importance": 2,
+      "description": "ホメロスの叙事詩『イリアス』の舞台とされる遺跡。19世紀にシュリーマンが発掘した。"
+    },
+    {
+      "id": "miletus",
+      "kind": "city",
+      "name": "ミレトス",
+      "coordinates": [27.278, 37.53],
+      "importance": 2,
+      "description": "小アジア西岸イオニア地方の有力な植民市。自然哲学の祖タレスを輩出した。"
+    },
+    {
+      "id": "ephesus",
+      "kind": "city",
+      "name": "エフェソス",
+      "coordinates": [27.358, 37.943],
+      "importance": 2,
+      "description": "イオニア地方の有力な都市。世界七不思議の一つアルテミス神殿が建てられた。"
     }
   ]
 }
