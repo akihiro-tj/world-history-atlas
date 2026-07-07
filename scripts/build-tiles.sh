@@ -16,11 +16,11 @@ for layer in "${LAYERS[@]}"; do
   [ -f "$zip" ] || curl -fL "$BASE_URL/$layer.zip" -o "$zip"
 done
 
-if [ -s scripts/tile-sources.sha256 ]; then
-  (cd "$CACHE_DIR" && shasum -a 256 -c "$OLDPWD/scripts/tile-sources.sha256")
-else
-  echo "WARN: scripts/tile-sources.sha256 が未生成。検証をスキップした" >&2
+if [ ! -s scripts/tile-sources.sha256 ]; then
+  echo "ERROR: scripts/tile-sources.sha256 がない。ソースを意図的に更新する場合は .cache/naturalearth/ の zip から再生成してコミットする（README 参照）" >&2
+  exit 1
 fi
+(cd "$CACHE_DIR" && shasum -a 256 -c "$OLDPWD/scripts/tile-sources.sha256")
 
 for layer in "${LAYERS[@]}"; do
   unzip -o "$CACHE_DIR/$layer.zip" -d "$BUILD_DIR/$layer" >/dev/null
