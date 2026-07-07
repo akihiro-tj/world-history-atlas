@@ -2,6 +2,7 @@ import type maplibregl from 'maplibre-gl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FeatureMarkers } from '../map/FeatureMarkers';
 import { MapView } from '../map/MapView';
+import { DetailPanel } from '../theme/DetailPanel';
 import { fetchTheme, fetchThemeIndex } from '../theme/fetch';
 import {
   filterFeaturesByImportance,
@@ -93,6 +94,17 @@ export function App() {
     }
   }, [map, selection]);
 
+  // パネル外（地図の余白）クリックで閉じる。マーカーのクリックは
+  // buildMarkerElement 内の stopPropagation により map まで届かない
+  useEffect(() => {
+    if (!map) return;
+    const closePanel = () => setSelectedFeatureId(undefined);
+    map.on('click', closePanel);
+    return () => {
+      map.off('click', closePanel);
+    };
+  }, [map]);
+
   const selectedThemeId =
     selection.status === 'loaded'
       ? selection.theme.id
@@ -106,6 +118,10 @@ export function App() {
         ? filterFeaturesByImportance(selection.theme.features, importanceFilter)
         : [],
     [selection, importanceFilter],
+  );
+
+  const selectedFeature = visibleFeatures.find(
+    (feature) => feature.id === selectedFeatureId,
   );
 
   return (
@@ -134,6 +150,12 @@ export function App() {
             selectedFeatureId={selectedFeatureId}
             onSelectFeature={setSelectedFeatureId}
           />
+          {selectedFeature && (
+            <DetailPanel
+              feature={selectedFeature}
+              onClose={() => setSelectedFeatureId(undefined)}
+            />
+          )}
           {selection.status === 'none' && (
             <p
               data-testid="empty-state"

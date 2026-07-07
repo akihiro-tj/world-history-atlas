@@ -1,4 +1,3 @@
-@wip
 Feature: フィーチャーの解説表示
 
   Background:

@@ -3,7 +3,11 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from './App';
 
-const fakeMap = vi.hoisted(() => ({ fitBounds: vi.fn() }));
+const fakeMap = vi.hoisted(() => ({
+  fitBounds: vi.fn(),
+  on: vi.fn(),
+  off: vi.fn(),
+}));
 
 vi.mock('../map/MapView', async () => {
   const { useEffect } = await import('react');
