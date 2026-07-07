@@ -1,4 +1,3 @@
-@wip
 Feature: 頻出度フィルタ
 
   Background:
