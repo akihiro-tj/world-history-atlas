@@ -1,20 +1,58 @@
-import { useEffect, useState } from 'react';
+import type maplibregl from 'maplibre-gl';
+import { useCallback, useEffect, useState } from 'react';
 import { MapView } from '../map/MapView';
-import { fetchThemeIndex } from '../theme/fetch';
+import { fetchTheme, fetchThemeIndex } from '../theme/fetch';
 import { Sidebar } from '../theme/Sidebar';
-import type { ThemeIndexEntry } from '../theme/schema';
+import type { Theme, ThemeIndexEntry } from '../theme/schema';
+import {
+  buildSearchWithTheme,
+  parseThemeIdFromSearch,
+} from '../theme/urlState';
 
 type ThemeIndexState =
   | { status: 'loading' }
   | { status: 'loaded'; entries: ThemeIndexEntry[] }
   | { status: 'error' };
 
+type ThemeSelection =
+  | { status: 'none' }
+  | { status: 'loading'; themeId: string }
+  | { status: 'loaded'; theme: Theme }
+  | { status: 'error'; themeId: string };
+
+function syncThemeToUrl(themeId: string | undefined): void {
+  const search = buildSearchWithTheme(window.location.search, themeId);
+  window.history.replaceState(null, '', `${window.location.pathname}${search}`);
+}
+
 export function App() {
   const [indexState, setIndexState] = useState<ThemeIndexState>({
     status: 'loading',
   });
-  const [selectedThemeId, setSelectedThemeId] = useState<string | undefined>(
-    undefined,
+  const [selection, setSelection] = useState<ThemeSelection>({
+    status: 'none',
+  });
+  const [map, setMap] = useState<maplibregl.Map | null>(null);
+
+  const selectTheme = useCallback(
+    (themeId: string, options?: { fallbackToNoneOnError: boolean }) => {
+      setSelection({ status: 'loading', themeId });
+      syncThemeToUrl(themeId);
+      void fetchTheme(themeId).then((result) => {
+        setSelection((current) => {
+          if (current.status !== 'loading' || current.themeId !== themeId) {
+            return current;
+          }
+          if (result.ok) return { status: 'loaded', theme: result.value };
+          if (options?.fallbackToNoneOnError) {
+            syncThemeToUrl(undefined);
+            return { status: 'none' };
+          }
+          return { status: 'error', themeId };
+        });
+      });
+    },
+    [],
   );
 
   useEffect(() => {
@@ -32,6 +70,26 @@ export function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const initialThemeId = parseThemeIdFromSearch(window.location.search);
+    if (initialThemeId !== undefined) {
+      selectTheme(initialThemeId, { fallbackToNoneOnError: true });
+    }
+  }, [selectTheme]);
+
+  useEffect(() => {
+    if (map && selection.status === 'loaded') {
+      map.fitBounds(selection.theme.bounds, { padding: 40, duration: 800 });
+    }
+  }, [map, selection]);
+
+  const selectedThemeId =
+    selection.status === 'loaded'
+      ? selection.theme.id
+      : selection.status === 'none'
+        ? undefined
+        : selection.themeId;
+
   return (
     <div className="flex h-dvh flex-col">
       <header className="flex items-center border-b border-slate-200 px-4 py-2">
@@ -43,7 +101,7 @@ export function App() {
             <Sidebar
               entries={indexState.entries}
               selectedThemeId={selectedThemeId}
-              onSelectTheme={setSelectedThemeId}
+              onSelectTheme={(id) => selectTheme(id)}
             />
           )}
           {indexState.status === 'error' && (
@@ -51,13 +109,21 @@ export function App() {
           )}
         </aside>
         <main className="relative min-w-0 flex-1">
-          <MapView colorTheme="light" />
-          {selectedThemeId === undefined && (
+          <MapView colorTheme="light" onMapReady={setMap} />
+          {selection.status === 'none' && (
             <p
               data-testid="empty-state"
               className="absolute top-4 left-1/2 -translate-x-1/2 rounded bg-white/90 px-4 py-2 text-sm shadow"
             >
               テーマを選んで地図を探索しましょう
+            </p>
+          )}
+          {selection.status === 'error' && (
+            <p
+              data-testid="theme-error"
+              className="absolute top-4 left-1/2 -translate-x-1/2 rounded bg-white/90 px-4 py-2 text-sm shadow"
+            >
+              テーマの読み込みに失敗しました
             </p>
           )}
         </main>
