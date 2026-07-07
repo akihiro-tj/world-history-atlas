@@ -1,0 +1,131 @@
+{
+  "id": "medieval-europe",
+  "title": "中世ヨーロッパ",
+  "era": "476年〜1453年",
+  "summary": "西ローマ帝国滅亡後、封建社会とカトリック教会を軸にヨーロッパ世界が形成された。",
+  "bounds": [-12.0, 30.0, 36.0, 60.0],
+  "features": [
+    {
+      "id": "rome",
+      "kind": "city",
+      "name": "ローマ",
+      "coordinates": [12.496, 41.903],
+      "importance": 1,
+      "description": "教皇座が置かれた都。カトリック教会の権威の中心として西欧世界に影響を及ぼした。"
+    },
+    {
+      "id": "constantinople",
+      "kind": "city",
+      "name": "コンスタンティノープル",
+      "coordinates": [28.978, 41.008],
+      "importance": 1,
+      "description": "ビザンツ帝国の都。1453年にオスマン帝国に陥落するまで東方正教世界の中心であり続けた。"
+    },
+    {
+      "id": "paris",
+      "kind": "city",
+      "name": "パリ",
+      "coordinates": [2.352, 48.857],
+      "importance": 1,
+      "description": "カペー朝以来のフランス王権の中心地。ノートルダム大聖堂やパリ大学が置かれた。"
+    },
+    {
+      "id": "london",
+      "kind": "city",
+      "name": "ロンドン",
+      "coordinates": [-0.128, 51.507],
+      "importance": 1,
+      "description": "ノルマン征服後のイングランド王権の中心地。1215年、ここでマグナ・カルタが認められた。"
+    },
+    {
+      "id": "jerusalem",
+      "kind": "city",
+      "name": "エルサレム",
+      "coordinates": [35.234, 31.773],
+      "importance": 1,
+      "description": "1099年、第1回十字軍が占領しエルサレム王国を建てた。十字軍運動を通じ争奪の的となった。"
+    },
+    {
+      "id": "aachen",
+      "kind": "city",
+      "name": "アーヘン",
+      "coordinates": [6.084, 50.777],
+      "importance": 2,
+      "description": "カール大帝の宮廷が置かれたカロリング朝の都。大帝の墓所ともなった。"
+    },
+    {
+      "id": "toledo",
+      "kind": "city",
+      "name": "トレド",
+      "coordinates": [-4.023, 39.858],
+      "importance": 2,
+      "description": "1085年、レコンキスタの過程でカスティリャ王国が奪回した都市。翻訳事業を通じ学術交流の拠点となった。"
+    },
+    {
+      "id": "venice",
+      "kind": "city",
+      "name": "ヴェネツィア",
+      "coordinates": [12.333, 45.437],
+      "importance": 2,
+      "description": "地中海交易で栄えた海洋都市国家。第4回十字軍でコンスタンティノープルを占領した。"
+    },
+    {
+      "id": "hastings",
+      "kind": "city",
+      "name": "ヘイスティングズ",
+      "coordinates": [0.486, 50.907],
+      "importance": 2,
+      "description": "1066年、ノルマンディー公ウィリアムがイングランド王ハロルド2世を破った古戦場。"
+    },
+    {
+      "id": "clermont",
+      "kind": "city",
+      "name": "クレルモン",
+      "coordinates": [3.082, 45.783],
+      "importance": 2,
+      "description": "1095年、教皇ウルバヌス2世が十字軍の派遣を提唱した公会議の開催地。"
+    },
+    {
+      "id": "canossa",
+      "kind": "city",
+      "name": "カノッサ",
+      "coordinates": [10.456, 44.576],
+      "importance": 1,
+      "description": "1077年、破門された皇帝ハインリヒ4世が教皇に赦しを請うた「カノッサの屈辱」の舞台。"
+    },
+    {
+      "id": "avignon",
+      "kind": "city",
+      "name": "アヴィニョン",
+      "coordinates": [4.809, 43.948],
+      "importance": 1,
+      "description": "1309年から約70年間、教皇庁が置かれた都市。「教皇のバビロン捕囚」と呼ばれる。"
+    },
+    {
+      "id": "cluny",
+      "kind": "city",
+      "name": "クリュニー",
+      "coordinates": [4.66, 46.435],
+      "importance": 3,
+      "description": "910年に創建された修道院を中心に、教会の腐敗を正す改革運動が広がった地。"
+    },
+    {
+      "id": "mediterranean-sea",
+      "kind": "terrain",
+      "terrainKind": "sea",
+      "name": "地中海",
+      "coordinates": [15.0, 37.0],
+      "importance": 2,
+      "description": "イタリア海洋都市の交易と十字軍の輸送を支えた内海。"
+    },
+    {
+      "id": "pyrenees",
+      "kind": "terrain",
+      "terrainKind": "mountain",
+      "name": "ピレネー山脈",
+      "coordinates": [-1.319, 43.01],
+      "importance": 3,
+      "description": "フランク王国とイスラーム勢力下のイベリア半島を隔てる山脈。778年のロンスヴォーの戦いの舞台となった。"
+    }
+  ]
+}
