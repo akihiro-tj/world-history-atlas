@@ -1,6 +1,8 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { StrictMode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { isWebgl2Supported } from '../shared/webgl';
 import { fetchThemeIndex } from '../theme/fetch';
 import { App } from './App';
 
@@ -21,7 +23,7 @@ const { fakeMap, mapHandlers } = vi.hoisted(() => {
 });
 
 vi.mock('../shared/webgl', () => ({
-  isWebgl2Supported: () => true,
+  isWebgl2Supported: vi.fn(() => true),
 }));
 
 vi.mock('../map/MapView', async () => {
@@ -106,6 +108,7 @@ vi.mock('../theme/fetch', () => ({
 beforeEach(() => {
   fakeMap.fitBounds.mockClear();
   mapHandlers.clear();
+  vi.mocked(isWebgl2Supported).mockReturnValue(true);
 });
 
 afterEach(() => {
@@ -170,6 +173,65 @@ describe('App', () => {
     expect(
       await screen.findByRole('button', { name: /古代オリエント/ }),
     ).toBeInTheDocument();
+  });
+
+  it('WebGL2 非対応なら地図の代わりに案内文を表示する', async () => {
+    vi.mocked(isWebgl2Supported).mockReturnValue(false);
+    render(<App />);
+    await screen.findByRole('button', { name: /古代オリエント/ });
+    expect(screen.getByText(/WebGL2/)).toBeInTheDocument();
+    expect(screen.queryByTestId('map-view')).not.toBeInTheDocument();
+  });
+
+  it('古い index レスポンスは新しいレスポンスを上書きしない', async () => {
+    let resolveStale!: (
+      value: Awaited<ReturnType<typeof fetchThemeIndex>>,
+    ) => void;
+    let resolveLatest!: (
+      value: Awaited<ReturnType<typeof fetchThemeIndex>>,
+    ) => void;
+    const stale = new Promise<Awaited<ReturnType<typeof fetchThemeIndex>>>(
+      (resolve) => {
+        resolveStale = resolve;
+      },
+    );
+    const latest = new Promise<Awaited<ReturnType<typeof fetchThemeIndex>>>(
+      (resolve) => {
+        resolveLatest = resolve;
+      },
+    );
+    vi.mocked(fetchThemeIndex)
+      .mockReturnValueOnce(stale)
+      .mockReturnValueOnce(latest);
+
+    render(
+      <StrictMode>
+        <App />
+      </StrictMode>,
+    );
+
+    resolveLatest({
+      ok: true,
+      value: [
+        { id: 'ancient-orient', title: '古代オリエント', era: 'era', order: 1 },
+      ],
+    });
+    expect(
+      await screen.findByRole('button', { name: /古代オリエント/ }),
+    ).toBeInTheDocument();
+
+    resolveStale({
+      ok: true,
+      value: [{ id: 'stale', title: '古いテーマ', era: 'era', order: 1 }],
+    });
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: /古代オリエント/ }),
+      ).toBeInTheDocument(),
+    );
+    expect(
+      screen.queryByRole('button', { name: /古いテーマ/ }),
+    ).not.toBeInTheDocument();
   });
 
   it('不正な直リンクは未選択にフォールバックし URL から theme を除去する', async () => {

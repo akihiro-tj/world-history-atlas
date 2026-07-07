@@ -1,5 +1,5 @@
 import type maplibregl from 'maplibre-gl';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FeatureMarkers } from '../map/FeatureMarkers';
 import { MapView } from '../map/MapView';
 import type { ColorTheme } from '../map/mapColors';
@@ -81,9 +81,12 @@ export function App() {
     [],
   );
 
+  const latestIndexRequestRef = useRef(0);
   const loadThemeIndex = useCallback(() => {
+    const requestId = ++latestIndexRequestRef.current;
     setIndexState({ status: 'loading' });
     void fetchThemeIndex().then((result) => {
+      if (requestId !== latestIndexRequestRef.current) return;
       setIndexState(
         result.ok
           ? { status: 'loaded', entries: result.value }
@@ -187,8 +190,9 @@ export function App() {
             <MapView colorTheme={colorTheme} onMapReady={setMap} />
           ) : (
             <p className="flex h-full items-center justify-center p-8 text-center text-sm">
-              お使いのブラウザは WebGL2
-              に対応していないため、地図を表示できません。最新のブラウザでお試しください。
+              {
+                'お使いのブラウザは WebGL2 に対応していないため、地図を表示できません。最新のブラウザでお試しください。'
+              }
             </p>
           )}
           <FeatureMarkers
