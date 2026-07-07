@@ -2698,15 +2698,15 @@ export function ImportanceFilterControl({ value, onChange }: ImportanceFilterCon
 
 Run: `pnpm vitest run src/theme/ImportanceFilterControl.test.tsx` → PASS 3 件
 
-- [ ] **Step 3: App の地図右上に配置**
+- [ ] **Step 3: App の地図左上に配置**
 
-`src/app/App.tsx` の `<main>` 内（テーマ選択中のみ表示）:
+`src/app/App.tsx` の `<main>` 内（テーマ選択中のみ表示）。右側・下部の解説パネルと競合しないよう左上に置く:
 
 ```tsx
 import { ImportanceFilterControl } from '../theme/ImportanceFilterControl';
 
 {selection.status === 'loaded' && (
-  <div className="absolute top-4 right-4 z-10">
+  <div className="absolute top-4 left-4 z-10">
     <ImportanceFilterControl value={importanceFilter} onChange={setImportanceFilter} />
   </div>
 )}
