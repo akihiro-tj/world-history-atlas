@@ -1,0 +1,130 @@
+{
+  "id": "early-modern-europe",
+  "title": "近世ヨーロッパ",
+  "era": "1517年〜1789年",
+  "summary": "宗教改革を経て主権国家体制が形成され、絶対王政のもとでヨーロッパ諸国が競い合った。",
+  "bounds": [-12.0, 35.0, 35.0, 62.0],
+  "features": [
+    {
+      "id": "wittenberg",
+      "kind": "city",
+      "name": "ヴィッテンベルク",
+      "coordinates": [12.646, 51.867],
+      "importance": 1,
+      "description": "1517年、ルターが「95か条の論題」を発表した地。宗教改革の出発点となった。"
+    },
+    {
+      "id": "geneva",
+      "kind": "city",
+      "name": "ジュネーヴ",
+      "coordinates": [6.143, 46.204],
+      "importance": 1,
+      "description": "カルヴァンが宗教改革を進めた都市。予定説に基づく神権政治的な統治が行われた。"
+    },
+    {
+      "id": "trent",
+      "kind": "city",
+      "name": "トリエント",
+      "coordinates": [11.121, 46.068],
+      "importance": 2,
+      "description": "1545年から公会議が開かれた地。カトリック教会の教義刷新（対抗宗教改革）が図られた。"
+    },
+    {
+      "id": "versailles",
+      "kind": "city",
+      "name": "ヴェルサイユ",
+      "coordinates": [2.122, 48.805],
+      "importance": 1,
+      "description": "ルイ14世が建設した宮殿。絶対王政を象徴し、各国の宮廷文化の模範となった。"
+    },
+    {
+      "id": "nantes",
+      "kind": "city",
+      "name": "ナント",
+      "coordinates": [-1.553, 47.217],
+      "importance": 2,
+      "description": "1598年、アンリ4世がユグノーに信仰の自由を認める勅令を発した都市。"
+    },
+    {
+      "id": "madrid",
+      "kind": "city",
+      "name": "マドリード",
+      "coordinates": [-3.704, 40.417],
+      "importance": 2,
+      "description": "スペイン=ハプスブルク朝の都。フェリペ2世のもとで広大な海外領土を治めた。"
+    },
+    {
+      "id": "vienna",
+      "kind": "city",
+      "name": "ウィーン",
+      "coordinates": [16.374, 48.208],
+      "importance": 1,
+      "description": "ハプスブルク家の都。1529年と1683年の2度、オスマン帝国軍に包囲された。"
+    },
+    {
+      "id": "amsterdam",
+      "kind": "city",
+      "name": "アムステルダム",
+      "coordinates": [4.904, 52.368],
+      "importance": 1,
+      "description": "オランダ東インド会社の本拠地。17世紀のオランダ経済的繁栄の中心となった。"
+    },
+    {
+      "id": "london",
+      "kind": "city",
+      "name": "ロンドン",
+      "coordinates": [-0.128, 51.507],
+      "importance": 1,
+      "description": "1688年の名誉革命を経て議会主権が確立した都市。近代議会政治の出発点となった。"
+    },
+    {
+      "id": "paris",
+      "kind": "city",
+      "name": "パリ",
+      "coordinates": [2.352, 48.857],
+      "importance": 1,
+      "description": "ブルボン朝フランスの都。1789年、フランス革命の口火が切られた。"
+    },
+    {
+      "id": "munster",
+      "kind": "city",
+      "name": "ミュンスター",
+      "coordinates": [7.628, 51.962],
+      "importance": 1,
+      "description": "1648年、三十年戦争を終結させたウェストファリア条約が結ばれた地の一つ。"
+    },
+    {
+      "id": "saint-petersburg",
+      "kind": "city",
+      "name": "サンクトペテルブルク",
+      "coordinates": [30.309, 59.938],
+      "importance": 2,
+      "description": "1703年、ピョートル1世が建設した新都。ロシアの西欧化政策を象徴する都市となった。"
+    },
+    {
+      "id": "berlin",
+      "kind": "city",
+      "name": "ベルリン",
+      "coordinates": [13.405, 52.52],
+      "importance": 2,
+      "description": "プロイセン王国の都。フリードリヒ2世（大王）のもとで強国化を進めた。"
+    },
+    {
+      "id": "lepanto",
+      "kind": "city",
+      "name": "レパント",
+      "coordinates": [21.828, 38.392],
+      "importance": 2,
+      "description": "1571年、スペインなど神聖同盟の艦隊がオスマン帝国海軍を破った海戦の地。"
+    },
+    {
+      "id": "english-channel",
+      "kind": "terrain",
+      "terrainKind": "strait",
+      "name": "イギリス海峡",
+      "coordinates": [1.4, 51.0],
+      "importance": 1,
+      "description": "1588年、イングランドがスペインの無敵艦隊（アルマダ）を破った海域。"
+    }
+  ]
+}

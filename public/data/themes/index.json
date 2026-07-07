@@ -40,5 +40,11 @@
     "title": "大航海時代",
     "era": "1415年〜1600年頃",
     "order": 9
+  },
+  {
+    "id": "early-modern-europe",
+    "title": "近世ヨーロッパ",
+    "era": "1517年〜1789年",
+    "order": 10
   }
 ]
