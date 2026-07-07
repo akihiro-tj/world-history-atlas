@@ -1322,13 +1322,17 @@ export function MapView({ colorTheme, onMapReady }: MapViewProps) {
   const mapRef = useRef<maplibregl.Map | null>(null);
   const onMapReadyRef = useRef(onMapReady);
   onMapReadyRef.current = onMapReady;
+  const colorThemeRef = useRef(colorTheme);
+  colorThemeRef.current = colorTheme;
+  const appliedColorThemeRef = useRef(colorTheme);
 
   useEffect(() => {
     if (!containerRef.current) return;
     ensurePmtilesProtocol();
+    appliedColorThemeRef.current = colorThemeRef.current;
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: buildMapStyle('light', window.location.origin),
+      style: buildMapStyle(colorThemeRef.current, window.location.origin),
       center: [20, 25],
       zoom: MIN_ZOOM,
       minZoom: MIN_ZOOM,
@@ -1344,7 +1348,9 @@ export function MapView({ colorTheme, onMapReady }: MapViewProps) {
   }, []);
 
   useEffect(() => {
-    mapRef.current?.setStyle(buildMapStyle(colorTheme, window.location.origin));
+    if (!mapRef.current || appliedColorThemeRef.current === colorTheme) return;
+    appliedColorThemeRef.current = colorTheme;
+    mapRef.current.setStyle(buildMapStyle(colorTheme, window.location.origin));
   }, [colorTheme]);
 
   return <div ref={containerRef} className="h-full w-full" data-testid="map-view" />;
