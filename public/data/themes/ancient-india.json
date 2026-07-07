@@ -62,12 +62,20 @@
       "description": "仏陀（ガウタマ=シッダールタ）が生まれたとされる地。"
     },
     {
+      "id": "kushinagar",
+      "kind": "city",
+      "name": "クシナガラ",
+      "coordinates": [83.89, 26.74],
+      "importance": 2,
+      "description": "仏陀が入滅（涅槃）した地。四大仏跡の一つ。"
+    },
+    {
       "id": "nalanda",
       "kind": "city",
       "name": "ナーランダー",
       "coordinates": [85.456, 25.122],
       "importance": 2,
-      "description": "グプタ朝期に建てられた仏教僧院。仏教教学の一大中心地として発展した。"
+      "description": "グプタ朝期に創建された仏教僧院。以後、仏教教学の一大中心地へと発展する起点となった。"
     },
     {
       "id": "ujjain",
@@ -82,7 +90,7 @@
       "kind": "terrain",
       "terrainKind": "river",
       "name": "インダス川",
-      "coordinates": [70.0, 28.0],
+      "coordinates": [68.85, 27.683],
       "importance": 1,
       "description": "インダス文明を育んだ大河。流域にハラッパーやモエンジョ=ダーロなどの都市が栄えた。"
     },
