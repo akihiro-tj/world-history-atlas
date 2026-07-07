@@ -925,9 +925,9 @@ Expected: PASS 7 件
     { "id": "nineveh", "kind": "city", "name": "ニネヴェ", "coordinates": [43.153, 36.360], "importance": 2, "description": "アッシリア帝国後期の都。アッシュルバニパル王の図書館が置かれた。" },
     { "id": "memphis", "kind": "city", "name": "メンフィス", "coordinates": [31.251, 29.844], "importance": 1, "description": "古王国時代のエジプトの都。ナイル川下流域に位置する。" },
     { "id": "thebes-egypt", "kind": "city", "name": "テーベ", "coordinates": [32.639, 25.720], "importance": 1, "description": "中王国・新王国時代のエジプトの都。カルナック神殿が造営された。" },
-    { "id": "euphrates", "kind": "terrain", "terrainKind": "river", "name": "ユーフラテス川", "coordinates": [43.5, 34.5], "importance": 1, "description": "メソポタミア文明を育んだ大河。ティグリス川とともに肥沃な三日月地帯を形成した。" },
-    { "id": "tigris", "kind": "terrain", "terrainKind": "river", "name": "ティグリス川", "coordinates": [44.4, 34.9], "importance": 1, "description": "メソポタミア東部を流れる大河。流域にアッシリアの中心都市が栄えた。" },
-    { "id": "nile", "kind": "terrain", "terrainKind": "river", "name": "ナイル川", "coordinates": [30.8, 26.5], "importance": 1, "description": "エジプト文明を育んだ大河。定期的な氾濫が肥沃な耕地をもたらした。" }
+    { "id": "euphrates", "kind": "terrain", "terrainKind": "river", "name": "ユーフラテス川", "coordinates": [42.8, 33.6], "importance": 1, "description": "メソポタミア文明を育んだ大河。ティグリス川とともに肥沃な三日月地帯を形成した。" },
+    { "id": "tigris", "kind": "terrain", "terrainKind": "river", "name": "ティグリス川", "coordinates": [43.9, 34.2], "importance": 1, "description": "メソポタミア東部を流れる大河。流域にアッシリアの中心都市が栄えた。" },
+    { "id": "nile", "kind": "terrain", "terrainKind": "river", "name": "ナイル川", "coordinates": [31.7, 26.5], "importance": 1, "description": "エジプト文明を育んだ大河。定期的な氾濫が肥沃な耕地をもたらした。" }
   ]
 }
 ```
