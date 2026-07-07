@@ -1,4 +1,4 @@
-@wip @mobile
+@mobile
 Feature: モバイル表示
 
   Scenario: ドロワーからテーマを選択できる

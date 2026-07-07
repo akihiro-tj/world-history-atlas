@@ -266,4 +266,14 @@ describe('App', () => {
 
     expect(screen.queryByTestId('detail-panel')).not.toBeInTheDocument();
   });
+
+  it('メニューボタンでドロワーの開閉状態が切り替わる', async () => {
+    render(<App />);
+    const menuButton = await screen.findByRole('button', {
+      name: 'テーマ一覧を開く',
+    });
+    expect(menuButton).toHaveAttribute('aria-expanded', 'false');
+    await userEvent.click(menuButton);
+    expect(menuButton).toHaveAttribute('aria-expanded', 'true');
+  });
 });

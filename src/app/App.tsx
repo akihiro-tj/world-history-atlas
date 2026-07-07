@@ -58,6 +58,7 @@ export function App() {
       window.matchMedia('(prefers-color-scheme: dark)').matches,
     ),
   );
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const selectTheme = useCallback(
     (themeId: string, options?: { fallbackToNoneOnError: boolean }) => {
@@ -157,6 +158,15 @@ export function App() {
   return (
     <div className="flex h-dvh flex-col bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100">
       <header className="flex items-center border-b border-slate-200 px-4 py-2 dark:border-slate-700">
+        <button
+          type="button"
+          aria-label="テーマ一覧を開く"
+          aria-expanded={isDrawerOpen}
+          onClick={() => setIsDrawerOpen(true)}
+          className="mr-2 rounded p-2 hover:bg-slate-100 md:hidden dark:hover:bg-slate-700"
+        >
+          ☰
+        </button>
         <h1 className="text-lg font-bold">世界史マップ</h1>
         <button
           type="button"
@@ -167,13 +177,28 @@ export function App() {
           {colorTheme === 'light' ? '🌙' : '☀️'}
         </button>
       </header>
-      <div className="flex min-h-0 flex-1">
-        <aside className="hidden w-64 shrink-0 overflow-y-auto border-r border-slate-200 md:block dark:border-slate-700">
+      <div className="relative flex min-h-0 flex-1">
+        {isDrawerOpen && (
+          <button
+            type="button"
+            aria-label="テーマ一覧を閉じる"
+            onClick={() => setIsDrawerOpen(false)}
+            className="absolute inset-y-0 right-0 left-64 z-20 bg-black/40 md:hidden"
+          />
+        )}
+        <aside
+          className={`w-64 shrink-0 overflow-y-auto border-r border-slate-200 bg-white max-md:absolute max-md:inset-y-0 max-md:left-0 max-md:z-30 max-md:transition-transform dark:border-slate-700 dark:bg-slate-900 ${
+            isDrawerOpen ? 'max-md:translate-x-0' : 'max-md:-translate-x-full'
+          }`}
+        >
           {indexState.status === 'loaded' && (
             <Sidebar
               entries={indexState.entries}
               selectedThemeId={selectedThemeId}
-              onSelectTheme={(id) => selectTheme(id)}
+              onSelectTheme={(id) => {
+                setIsDrawerOpen(false);
+                selectTheme(id);
+              }}
             />
           )}
           {indexState.status === 'error' && (
