@@ -1,5 +1,5 @@
 import type maplibregl from 'maplibre-gl';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FeatureMarkers } from '../map/FeatureMarkers';
 import { MapView } from '../map/MapView';
 import { fetchTheme, fetchThemeIndex } from '../theme/fetch';
@@ -100,10 +100,13 @@ export function App() {
         ? undefined
         : selection.themeId;
 
-  const visibleFeatures =
-    selection.status === 'loaded'
-      ? filterFeaturesByImportance(selection.theme.features, importanceFilter)
-      : [];
+  const visibleFeatures = useMemo(
+    () =>
+      selection.status === 'loaded'
+        ? filterFeaturesByImportance(selection.theme.features, importanceFilter)
+        : [],
+    [selection, importanceFilter],
+  );
 
   return (
     <div className="flex h-dvh flex-col">

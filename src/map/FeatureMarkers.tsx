@@ -1,5 +1,5 @@
 import maplibregl from 'maplibre-gl';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import type { ThemeFeature } from '../theme/schema';
 
 type FeatureMarkersProps = {
@@ -15,31 +15,44 @@ export function FeatureMarkers({
   selectedFeatureId,
   onSelectFeature,
 }: FeatureMarkersProps) {
+  const markersRef = useRef<Map<string, maplibregl.Marker>>(new Map());
+
   useEffect(() => {
     if (!map) return;
-    const markers = features.map((feature) =>
-      new maplibregl.Marker({
-        element: buildMarkerElement(
-          feature,
-          feature.id === selectedFeatureId,
-          onSelectFeature,
-        ),
+    const markers = markersRef.current;
+    for (const feature of features) {
+      const marker = new maplibregl.Marker({
+        element: buildMarkerElement(feature, onSelectFeature),
         anchor: feature.kind === 'city' ? 'left' : 'center',
       })
         .setLngLat(feature.coordinates)
-        .addTo(map),
-    );
+        .addTo(map);
+      markers.set(feature.id, marker);
+    }
     return () => {
-      for (const marker of markers) marker.remove();
+      for (const marker of markers.values()) marker.remove();
+      markers.clear();
     };
-  }, [map, features, selectedFeatureId, onSelectFeature]);
+  }, [map, features, onSelectFeature]);
+
+  useEffect(() => {
+    for (const feature of features) {
+      const marker = markersRef.current.get(feature.id);
+      if (!marker) continue;
+      const element = marker.getElement();
+      if (feature.id === selectedFeatureId) {
+        element.dataset.markerSelected = 'true';
+      } else {
+        delete element.dataset.markerSelected;
+      }
+    }
+  }, [features, selectedFeatureId]);
 
   return null;
 }
 
 function buildMarkerElement(
   feature: ThemeFeature,
-  isSelected: boolean,
   onSelect: (id: string) => void,
 ): HTMLElement {
   const button = document.createElement('button');
@@ -48,7 +61,6 @@ function buildMarkerElement(
   button.setAttribute('aria-label', feature.name);
   button.dataset.testid = `marker-${feature.id}`;
   button.dataset.markerKind = feature.kind;
-  if (isSelected) button.dataset.markerSelected = 'true';
   button.className = feature.kind === 'city' ? 'marker-city' : 'marker-terrain';
   button.addEventListener('click', (event) => {
     event.stopPropagation();
