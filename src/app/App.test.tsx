@@ -1,11 +1,21 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from './App';
 
-vi.mock('../map/MapView', () => ({
-  MapView: () => <div data-testid="map-view" />,
-}));
+const fakeMap = vi.hoisted(() => ({ fitBounds: vi.fn() }));
+
+vi.mock('../map/MapView', async () => {
+  const { useEffect } = await import('react');
+  return {
+    MapView: ({ onMapReady }: { onMapReady?: (map: unknown) => void }) => {
+      useEffect(() => {
+        onMapReady?.(fakeMap);
+      }, [onMapReady]);
+      return <div data-testid="map-view" />;
+    },
+  };
+});
 
 vi.mock('../theme/fetch', () => ({
   fetchThemeIndex: async () => ({
@@ -16,6 +26,12 @@ vi.mock('../theme/fetch', () => ({
         title: '古代オリエント',
         era: '前3000年頃〜前330年',
         order: 1,
+      },
+      {
+        id: 'broken-theme',
+        title: '壊れたテーマ',
+        era: 'era',
+        order: 2,
       },
     ],
   }),
@@ -44,6 +60,10 @@ vi.mock('../theme/fetch', () => ({
       : { ok: false, error: { type: 'network' } },
 }));
 
+beforeEach(() => {
+  fakeMap.fitBounds.mockClear();
+});
+
 afterEach(() => {
   window.history.replaceState(null, '', '/');
 });
@@ -68,5 +88,44 @@ describe('App', () => {
     );
     expect(window.location.search).toBe('?theme=ancient-orient');
     expect(screen.queryByTestId('empty-state')).not.toBeInTheDocument();
+  });
+
+  it('テーマを選択すると読み込み完了後に fitBounds が呼ばれる', async () => {
+    render(<App />);
+    await userEvent.click(
+      await screen.findByRole('button', { name: /古代オリエント/ }),
+    );
+    await waitFor(() =>
+      expect(fakeMap.fitBounds).toHaveBeenCalledWith([25, 22, 60, 42], {
+        padding: 40,
+        duration: 800,
+      }),
+    );
+  });
+
+  it('クリック由来の読み込み失敗でエラーメッセージを表示する', async () => {
+    render(<App />);
+    await userEvent.click(
+      await screen.findByRole('button', { name: /壊れたテーマ/ }),
+    );
+    expect(await screen.findByTestId('theme-error')).toBeInTheDocument();
+  });
+
+  it('不正な直リンクは未選択にフォールバックし URL から theme を除去する', async () => {
+    window.history.replaceState(null, '', '/?theme=no-such-theme');
+    render(<App />);
+    expect(await screen.findByTestId('empty-state')).toBeInTheDocument();
+    expect(window.location.search).toBe('');
+  });
+
+  it('有効な直リンクで読み込みから fitBounds まで到達する', async () => {
+    window.history.replaceState(null, '', '/?theme=ancient-orient');
+    render(<App />);
+    await waitFor(() =>
+      expect(fakeMap.fitBounds).toHaveBeenCalledWith([25, 22, 60, 42], {
+        padding: 40,
+        duration: 800,
+      }),
+    );
   });
 });
