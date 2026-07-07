@@ -1,4 +1,3 @@
-@wip
 Feature: カラーテーマ切替
 
   Scenario: トグルでダークテーマに切り替わる

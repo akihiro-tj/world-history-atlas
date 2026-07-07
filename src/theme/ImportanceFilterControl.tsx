@@ -18,7 +18,7 @@ export function ImportanceFilterControl({
   return (
     <fieldset
       aria-label="頻出度フィルタ"
-      className="m-0 flex overflow-hidden rounded-lg border-0 bg-white p-0 shadow"
+      className="m-0 flex overflow-hidden rounded-lg border-0 bg-white p-0 shadow dark:bg-slate-800"
     >
       {OPTIONS.map((option) => (
         <button

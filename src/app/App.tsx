@@ -2,6 +2,7 @@ import type maplibregl from 'maplibre-gl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FeatureMarkers } from '../map/FeatureMarkers';
 import { MapView } from '../map/MapView';
+import type { ColorTheme } from '../map/mapColors';
 import { DetailPanel } from '../theme/DetailPanel';
 import { fetchTheme, fetchThemeIndex } from '../theme/fetch';
 import {
@@ -15,6 +16,11 @@ import {
   buildSearchWithTheme,
   parseThemeIdFromSearch,
 } from '../theme/urlState';
+import {
+  COLOR_THEME_STORAGE_KEY,
+  resolveInitialColorTheme,
+  toggleColorTheme,
+} from './colorTheme';
 
 type ThemeIndexState =
   | { status: 'loading' }
@@ -44,6 +50,12 @@ export function App() {
   const [selectedFeatureId, setSelectedFeatureId] = useState<
     string | undefined
   >(undefined);
+  const [colorTheme, setColorTheme] = useState<ColorTheme>(() =>
+    resolveInitialColorTheme(
+      window.localStorage.getItem(COLOR_THEME_STORAGE_KEY),
+      window.matchMedia('(prefers-color-scheme: dark)').matches,
+    ),
+  );
 
   const selectTheme = useCallback(
     (themeId: string, options?: { fallbackToNoneOnError: boolean }) => {
@@ -90,6 +102,16 @@ export function App() {
   }, [selectTheme]);
 
   useEffect(() => {
+    document.documentElement.dataset.colorTheme = colorTheme;
+  }, [colorTheme]);
+
+  const handleToggleColorTheme = () => {
+    const next = toggleColorTheme(colorTheme);
+    window.localStorage.setItem(COLOR_THEME_STORAGE_KEY, next);
+    setColorTheme(next);
+  };
+
+  useEffect(() => {
     if (map && selection.status === 'loaded') {
       map.fitBounds(selection.theme.bounds, { padding: 40, duration: 800 });
     }
@@ -126,12 +148,20 @@ export function App() {
   );
 
   return (
-    <div className="flex h-dvh flex-col">
-      <header className="flex items-center border-b border-slate-200 px-4 py-2">
+    <div className="flex h-dvh flex-col bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100">
+      <header className="flex items-center border-b border-slate-200 px-4 py-2 dark:border-slate-700">
         <h1 className="text-lg font-bold">世界史マップ</h1>
+        <button
+          type="button"
+          aria-label="カラーテーマを切り替える"
+          onClick={handleToggleColorTheme}
+          className="ml-auto rounded p-2 hover:bg-slate-100 dark:hover:bg-slate-700"
+        >
+          {colorTheme === 'light' ? '🌙' : '☀️'}
+        </button>
       </header>
       <div className="flex min-h-0 flex-1">
-        <aside className="hidden w-64 shrink-0 overflow-y-auto border-r border-slate-200 md:block">
+        <aside className="hidden w-64 shrink-0 overflow-y-auto border-r border-slate-200 md:block dark:border-slate-700">
           {indexState.status === 'loaded' && (
             <Sidebar
               entries={indexState.entries}
@@ -144,7 +174,7 @@ export function App() {
           )}
         </aside>
         <main className="relative min-w-0 flex-1">
-          <MapView colorTheme="light" onMapReady={setMap} />
+          <MapView colorTheme={colorTheme} onMapReady={setMap} />
           <FeatureMarkers
             map={map}
             features={visibleFeatures}
@@ -168,7 +198,7 @@ export function App() {
           {selection.status === 'none' && (
             <p
               data-testid="empty-state"
-              className="absolute top-4 left-1/2 -translate-x-1/2 rounded bg-white/90 px-4 py-2 text-sm shadow"
+              className="absolute top-4 left-1/2 -translate-x-1/2 rounded bg-white/90 px-4 py-2 text-sm shadow dark:bg-slate-800/90"
             >
               テーマを選んで地図を探索しましょう
             </p>
@@ -176,7 +206,7 @@ export function App() {
           {selection.status === 'error' && (
             <p
               data-testid="theme-error"
-              className="absolute top-4 left-1/2 -translate-x-1/2 rounded bg-white/90 px-4 py-2 text-sm shadow"
+              className="absolute top-4 left-1/2 -translate-x-1/2 rounded bg-white/90 px-4 py-2 text-sm shadow dark:bg-slate-800/90"
             >
               テーマの読み込みに失敗しました
             </p>

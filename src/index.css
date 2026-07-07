@@ -1,10 +1,21 @@
 @import "tailwindcss";
 
+@custom-variant dark (
+  &:where([data-color-theme="dark"], [data-color-theme="dark"] *)
+);
+
 :root {
   --color-marker-city: #d64545;
   --color-marker-halo: #ffffff;
   --color-marker-label: #1f2430;
   --color-marker-terrain: #4878a8;
+}
+
+[data-color-theme="dark"] {
+  --color-marker-city: #ffb454;
+  --color-marker-halo: #1b222b;
+  --color-marker-label: #f0e6d2;
+  --color-marker-terrain: #7fa3c4;
 }
 
 .marker-city {
