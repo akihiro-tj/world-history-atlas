@@ -27,7 +27,7 @@
       "name": "洛陽",
       "coordinates": [112.454, 34.62],
       "importance": 1,
-      "description": "後漢・魏・唐の副都。中国北部の政治・文化の中心地の一つであった。"
+      "description": "後漢・魏の都、唐の副都（東都）。中国北部の政治・文化の中心地であった。"
     },
     {
       "id": "chengdu",
@@ -40,7 +40,7 @@
     {
       "id": "jiankang",
       "kind": "city",
-      "name": "建康",
+      "name": "建業（建康）",
       "coordinates": [118.797, 32.06],
       "importance": 2,
       "description": "三国の呉から東晋・南朝にかけての都。江南開発の中心地となった。"
