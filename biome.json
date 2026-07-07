@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!public/tiles", "!.features-gen"]
+    "includes": ["**", "!public/tiles/**", "!.features-gen/**"]
   },
   "formatter": {
     "enabled": true,
