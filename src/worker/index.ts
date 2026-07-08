@@ -10,11 +10,19 @@ export interface Env {
 }
 
 const R2_PATH_PREFIX = '/r2/';
+const MANIFEST_PATH = '/asset-manifest.json';
 const IMMUTABLE_CACHE_CONTROL = 'public, max-age=31536000, immutable';
+// Why: the manifest is the entrypoint that resolves every hashed asset URL, so
+// it must never be served stale. Hashed R2 assets stay immutable (unique key).
+const MANIFEST_CACHE_CONTROL = 'no-cache';
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
+
+    if (url.pathname === MANIFEST_PATH) {
+      return serveManifest(request, env);
+    }
 
     if (!url.pathname.startsWith(R2_PATH_PREFIX)) {
       return env.ASSETS.fetch(request);
@@ -30,6 +38,13 @@ export default {
     return serveFromR2(request, env, url);
   },
 } satisfies ExportedHandler<Env>;
+
+async function serveManifest(request: Request, env: Env): Promise<Response> {
+  const assetResponse = await env.ASSETS.fetch(request);
+  const response = new Response(assetResponse.body, assetResponse);
+  response.headers.set('cache-control', MANIFEST_CACHE_CONTROL);
+  return response;
+}
 
 async function serveFromR2(
   request: Request,
