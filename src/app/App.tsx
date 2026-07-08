@@ -6,6 +6,7 @@ import { MapView } from '../map/MapView';
 import type { ColorTheme } from '../map/mapColors';
 import { ErrorView } from '../shared/ErrorView';
 import { err, type Result } from '../shared/result';
+import { useMediaQuery } from '../shared/useMediaQuery';
 import { isWebgl2Supported } from '../shared/webgl';
 import { DetailPanel } from '../theme/DetailPanel';
 import {
@@ -46,6 +47,8 @@ type ThemeSelection =
   | { status: 'loaded'; theme: Theme }
   | { status: 'error'; themeId: string };
 
+const MOBILE_DRAWER_BREAKPOINT = '(max-width: 767px)';
+
 function syncThemeToUrl(themeId: string | undefined): void {
   const search = buildSearchWithTheme(window.location.search, themeId);
   window.history.replaceState(null, '', `${window.location.pathname}${search}`);
@@ -75,6 +78,7 @@ export function App() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [mapError, setMapError] = useState<string | undefined>(undefined);
   const [mapRetryCount, setMapRetryCount] = useState(0);
+  const isMobile = useMediaQuery(MOBILE_DRAWER_BREAKPOINT);
 
   const latestManifestRequestRef = useRef(0);
   const loadManifest = useCallback(() => {
@@ -256,6 +260,7 @@ export function App() {
           />
         )}
         <aside
+          inert={isMobile && !isDrawerOpen ? true : undefined}
           className={`w-64 shrink-0 overflow-y-auto border-r border-slate-200 bg-white max-md:absolute max-md:inset-y-0 max-md:left-0 max-md:z-30 max-md:transition-transform dark:border-slate-700 dark:bg-slate-900 ${
             isDrawerOpen ? 'max-md:translate-x-0' : 'max-md:-translate-x-full'
           }`}

@@ -356,4 +356,25 @@ describe('App', () => {
 
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
+
+  it('モバイル幅でドロワーが閉じている間は aside が inert になる', async () => {
+    const originalMatchMedia = window.matchMedia;
+    window.matchMedia = ((query: string) => ({
+      matches: query === '(max-width: 767px)',
+      media: query,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    })) as unknown as typeof window.matchMedia;
+
+    render(<App />);
+    await screen.findByRole('button', { name: /古代オリエント/ });
+    expect(screen.getByRole('complementary')).toHaveAttribute('inert');
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'テーマ一覧を開く' }),
+    );
+    expect(screen.getByRole('complementary')).not.toHaveAttribute('inert');
+
+    window.matchMedia = originalMatchMedia;
+  });
 });
