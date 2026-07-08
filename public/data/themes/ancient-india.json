@@ -1,0 +1,125 @@
+{
+  "id": "ancient-india",
+  "title": "古代インド",
+  "era": "前2600年頃〜後550年",
+  "summary": "インダス文明に始まり、仏教の成立を経てマウリヤ朝・グプタ朝の統一王朝が興った。",
+  "bounds": [60.0, 5.0, 95.0, 37.0],
+  "features": [
+    {
+      "id": "harappa",
+      "kind": "city",
+      "name": "ハラッパー",
+      "coordinates": [72.867, 30.633],
+      "importance": 1,
+      "description": "インダス文明を代表する都市遺跡の一つ。整然とした都市計画で知られる。"
+    },
+    {
+      "id": "mohenjo-daro",
+      "kind": "city",
+      "name": "モエンジョ=ダーロ",
+      "coordinates": [68.137, 27.324],
+      "importance": 1,
+      "description": "インダス文明最大級の都市遺跡。沐浴場や排水路など計画的な都市構造を持つ。"
+    },
+    {
+      "id": "pataliputra",
+      "kind": "city",
+      "name": "パータリプトラ",
+      "coordinates": [85.136, 25.594],
+      "importance": 1,
+      "description": "マウリヤ朝・グプタ朝の都。現在のパトナにあたる。"
+    },
+    {
+      "id": "taxila",
+      "kind": "city",
+      "name": "タキシラ",
+      "coordinates": [72.786, 33.741],
+      "importance": 2,
+      "description": "ガンダーラ地方の学術都市。ギリシア文化とインド文化が融合したガンダーラ美術の中心地の一つ。"
+    },
+    {
+      "id": "bodh-gaya",
+      "kind": "city",
+      "name": "ブッダガヤ",
+      "coordinates": [84.987, 24.696],
+      "importance": 1,
+      "description": "仏陀が悟りを開いたとされる地。仏教の四大聖地の一つ。"
+    },
+    {
+      "id": "sarnath",
+      "kind": "city",
+      "name": "サールナート",
+      "coordinates": [83.023, 25.376],
+      "importance": 2,
+      "description": "仏陀が悟りを開いた後、最初の説法を行ったとされる地。"
+    },
+    {
+      "id": "lumbini",
+      "kind": "city",
+      "name": "ルンビニー",
+      "coordinates": [83.275, 27.467],
+      "importance": 2,
+      "description": "仏陀（ガウタマ=シッダールタ）が生まれたとされる地。"
+    },
+    {
+      "id": "kushinagar",
+      "kind": "city",
+      "name": "クシナガラ",
+      "coordinates": [83.89, 26.74],
+      "importance": 2,
+      "description": "仏陀が入滅（涅槃）した地。四大仏跡の一つ。"
+    },
+    {
+      "id": "nalanda",
+      "kind": "city",
+      "name": "ナーランダー",
+      "coordinates": [85.456, 25.122],
+      "importance": 2,
+      "description": "グプタ朝期に創建された仏教僧院。以後、仏教教学の一大中心地へと発展する起点となった。"
+    },
+    {
+      "id": "ujjain",
+      "kind": "city",
+      "name": "ウッジャイニー",
+      "coordinates": [75.785, 23.179],
+      "importance": 3,
+      "description": "グプタ朝期に天文学の中心地として栄えた都市。"
+    },
+    {
+      "id": "indus-river",
+      "kind": "terrain",
+      "terrainKind": "river",
+      "name": "インダス川",
+      "coordinates": [68.85, 27.683],
+      "importance": 1,
+      "description": "インダス文明を育んだ大河。流域にハラッパーやモエンジョ=ダーロなどの都市が栄えた。"
+    },
+    {
+      "id": "ganges-river",
+      "kind": "terrain",
+      "terrainKind": "river",
+      "name": "ガンジス川",
+      "coordinates": [81.84, 25.44],
+      "importance": 1,
+      "description": "北インドを流れる大河。ヒンドゥー教で神聖視され、流域に多くの王朝の中心地が発達した。"
+    },
+    {
+      "id": "deccan-plateau",
+      "kind": "terrain",
+      "terrainKind": "region",
+      "name": "デカン高原",
+      "coordinates": [77.0, 18.0],
+      "importance": 2,
+      "description": "インド半島中南部に広がる高原地帯。北のガンジス平原とは異なる文化圏を形成した。"
+    },
+    {
+      "id": "kalinga",
+      "kind": "terrain",
+      "terrainKind": "region",
+      "name": "カリンガ",
+      "coordinates": [85.82, 20.27],
+      "importance": 2,
+      "description": "東海岸の王国。前261年、マウリヤ朝アショーカ王の征服戦争の地となり、王の仏教への回心を促した。"
+    }
+  ]
+}

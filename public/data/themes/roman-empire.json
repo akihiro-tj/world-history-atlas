@@ -1,0 +1,141 @@
+{
+  "id": "roman-empire",
+  "title": "ローマ帝国",
+  "era": "前27年〜後476年",
+  "summary": "地中海世界を統一した帝政ローマが繁栄し、東西分裂を経て西方が滅亡した。",
+  "bounds": [-10.0, 24.0, 45.0, 55.0],
+  "features": [
+    {
+      "id": "rome",
+      "kind": "city",
+      "name": "ローマ",
+      "coordinates": [12.496, 41.903],
+      "importance": 1,
+      "description": "帝政ローマの都。地中海世界を統一する大帝国の中心地として繁栄した。"
+    },
+    {
+      "id": "constantinople",
+      "kind": "city",
+      "name": "コンスタンティノープル",
+      "coordinates": [28.978, 41.008],
+      "importance": 1,
+      "description": "コンスタンティヌス帝が330年に遷都した新都。のちビザンツ帝国の都となった。"
+    },
+    {
+      "id": "alexandria",
+      "kind": "city",
+      "name": "アレクサンドリア",
+      "coordinates": [29.919, 31.2],
+      "importance": 1,
+      "description": "プトレマイオス朝を経てローマ領エジプトの中心都市となった。大図書館で知られた。"
+    },
+    {
+      "id": "carthage",
+      "kind": "city",
+      "name": "カルタゴ",
+      "coordinates": [10.322, 36.853],
+      "importance": 2,
+      "description": "ポエニ戦争後、帝政期にローマの属州都市として再建され、北アフリカ随一の都市に発展した。"
+    },
+    {
+      "id": "antioch",
+      "kind": "city",
+      "name": "アンティオキア",
+      "coordinates": [36.157, 36.207],
+      "importance": 2,
+      "description": "シリア属州の中心都市。東方交易の要地であり初期キリスト教布教の拠点ともなった。"
+    },
+    {
+      "id": "pompeii",
+      "kind": "city",
+      "name": "ポンペイ",
+      "coordinates": [14.485, 40.751],
+      "importance": 2,
+      "description": "79年、ヴェスヴィオ火山の噴火で埋没した都市。当時のローマ都市の姿をよく残す。"
+    },
+    {
+      "id": "ravenna",
+      "kind": "city",
+      "name": "ラヴェンナ",
+      "coordinates": [12.204, 44.418],
+      "importance": 2,
+      "description": "西ローマ帝国末期の都。476年、最後の皇帝が廃位されここで西ローマ帝国は滅んだ。"
+    },
+    {
+      "id": "milan",
+      "kind": "city",
+      "name": "ミラノ",
+      "coordinates": [9.19, 45.464],
+      "importance": 2,
+      "description": "313年、コンスタンティヌス帝がキリスト教を公認する勅令を発布した都市。"
+    },
+    {
+      "id": "athens",
+      "kind": "city",
+      "name": "アテネ",
+      "coordinates": [23.727, 37.984],
+      "importance": 2,
+      "description": "帝政期もギリシア文化の中心地として繁栄した。ハドリアヌス帝が神殿群を造営した。"
+    },
+    {
+      "id": "jerusalem",
+      "kind": "city",
+      "name": "エルサレム",
+      "coordinates": [35.234, 31.773],
+      "importance": 1,
+      "description": "ユダヤ属州の中心都市。70年、ユダヤ戦争鎮圧の過程でエルサレム神殿が破壊された。"
+    },
+    {
+      "id": "londinium",
+      "kind": "city",
+      "name": "ロンディニウム",
+      "coordinates": [-0.128, 51.507],
+      "importance": 3,
+      "description": "ブリタニア属州に築かれた都市。現在のロンドンの起源となった。"
+    },
+    {
+      "id": "lugdunum",
+      "kind": "city",
+      "name": "ルグドゥヌム",
+      "coordinates": [4.836, 45.764],
+      "importance": 3,
+      "description": "ガリア属州統治の中心都市として発展した。皇帝クラウディウスの生誕地でもある。"
+    },
+    {
+      "id": "mediterranean-sea",
+      "kind": "terrain",
+      "terrainKind": "sea",
+      "name": "地中海",
+      "coordinates": [15.0, 37.0],
+      "importance": 1,
+      "description": "帝政ローマが『我らの海』と呼んだ内海。地中海世界の交易と統一を支えた。"
+    },
+    {
+      "id": "rhine",
+      "kind": "terrain",
+      "terrainKind": "river",
+      "name": "ライン川",
+      "coordinates": [6.96, 50.94],
+      "importance": 1,
+      "description": "ドナウ川とともに帝国の北方国境を形成した大河。ケルン付近には要塞都市が置かれた。"
+    },
+    {
+      "id": "danube",
+      "kind": "terrain",
+      "terrainKind": "river",
+      "name": "ドナウ川",
+      "coordinates": [16.37, 48.21],
+      "importance": 1,
+      "description": "ライン川とともに帝国の北方国境をなした大河。ウィーン付近に軍団基地が置かれた。"
+    },
+    {
+      "id": "alps",
+      "kind": "terrain",
+      "terrainKind": "mountain",
+      "name": "アルプス山脈",
+      "coordinates": [6.865, 45.833],
+      "importance": 2,
+      "description": "イタリア半島とガリア・ゲルマニアを隔てる山脈。帝国内交通の難所であった。"
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+@custom-variant dark (
+  &:where([data-color-theme="dark"], [data-color-theme="dark"] *)
+);
+
+/* Warning: Tailwind v4 preflight sets the button cursor to default, so restore
+   the pointer cursor on interactive elements. */
+@layer base {
+  button:not(:disabled),
+  [role="button"],
+  a[href],
+  summary {
+    cursor: pointer;
+  }
+}
+
+:root {
+  --color-marker-city: #d64545;
+  --color-marker-halo: #ffffff;
+  --color-marker-label: #1f2430;
+  --color-marker-terrain: #4878a8;
+}
+
+[data-color-theme="dark"] {
+  --color-marker-city: #ffb454;
+  --color-marker-halo: #1b222b;
+  --color-marker-label: #f0e6d2;
+  --color-marker-terrain: #7fa3c4;
+}
+
+.marker-city {
+  position: relative;
+  padding-left: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-marker-label);
+  text-shadow: 0 0 3px var(--color-marker-halo);
+  cursor: pointer;
+}
+
+.marker-city::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: var(--color-marker-city);
+  border: 2px solid var(--color-marker-halo);
+}
+
+.marker-terrain {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--color-marker-terrain);
+  text-shadow: 0 0 3px var(--color-marker-halo);
+  cursor: pointer;
+}
+
+button[data-marker-selected="true"] {
+  outline: 2px solid var(--color-marker-city);
+  outline-offset: 2px;
+  border-radius: 2px;
+}

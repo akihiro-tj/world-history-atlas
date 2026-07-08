@@ -30,7 +30,7 @@
 
 ```
 world-history-atlas/
-├── flake.nix / flake.lock         # Task 2: タイルパイプライン devShell
+├── flake.nix / flake.lock         # Task 2: 開発用 devShell（tippecanoe, gdal, Node 24, pnpm）
 ├── package.json / pnpm-lock.yaml / pnpm-workspace.yaml   # Task 1 / minimumReleaseAge は Task 21
 ├── vite.config.ts / tsconfig.json / biome.json / index.html  # Task 1
 ├── wrangler.jsonc                 # Task 19
@@ -87,7 +87,7 @@ world-history-atlas/
 | 18 | テーマデータ拡充（8〜12 テーマ） | |
 | 19 | Cloudflare デプロイ + Range request 実機検証 | ✅ wrangler 認証 |
 | 20 | CI ワークフロー | |
-| 21 | デプロイ/プレビュー WF + dependabot + minimumReleaseAge | ✅ Secrets 登録 |
+| 21 | デプロイ/プレビュー WF + dependabot + cooldown | ✅ Secrets 登録 |
 | 22 | README + 最終全体レビュー | ✅ デザインレビュー |
 
 ---
@@ -284,9 +284,11 @@ pnpm exec biome init
 {
   "formatter": { "indentStyle": "space", "indentWidth": 2 },
   "javascript": { "formatter": { "quoteStyle": "single" } },
-  "files": { "includes": ["**", "!public/tiles/**", "!.features-gen/**"] }
+  "files": { "includes": ["**", "!public/tiles", "!.features-gen"] }
 }
 ```
+
+除外はフォルダ形式（`/**` なし）で書く。`/**` 付きだと Biome が `useBiomeIgnoreFolder` 警告を出す。
 
 - [ ] **Step 5: 失敗するテストを書く**
 
@@ -348,7 +350,7 @@ git commit -m "chore: scaffold Vite + React + TypeScript + Tailwind project"
     {
       devShells = forAllSystems (pkgs: {
         default = pkgs.mkShell {
-          packages = [ pkgs.tippecanoe pkgs.gdal pkgs.curl pkgs.unzip ];
+          packages = [ pkgs.tippecanoe pkgs.gdal pkgs.curl pkgs.unzip pkgs.nodejs_24 pkgs.pnpm ];
         };
       });
     };
@@ -359,6 +361,10 @@ git commit -m "chore: scaffold Vite + React + TypeScript + Tailwind project"
 
 ```bash
 nix develop -c tippecanoe --version   # tippecanoe vX.Y.Z が表示される
+nix develop -c node --version         # v24.x が表示される（devShell が Node 24 を提供）
+nix develop -c pnpm install           # Node 24 の実行環境で依存を解決できる
+nix develop -c pnpm test && nix develop -c pnpm typecheck && nix develop -c pnpm lint
+# ↑ Node 24 上でツールチェーン全体が動くことの統合検証（Task 1 は Node 26 環境で検証されたため、ここがゲート）
 nix develop -c ogr2ogr --version      # GDAL X.Y.Z が表示される
 ```
 
@@ -387,11 +393,11 @@ for layer in "${LAYERS[@]}"; do
   [ -f "$zip" ] || curl -fL "$BASE_URL/$layer.zip" -o "$zip"
 done
 
-if [ -s scripts/tile-sources.sha256 ]; then
-  (cd "$CACHE_DIR" && shasum -a 256 -c "$OLDPWD/scripts/tile-sources.sha256")
-else
-  echo "WARN: scripts/tile-sources.sha256 が未生成。検証をスキップした" >&2
+if [ ! -s scripts/tile-sources.sha256 ]; then
+  echo "ERROR: scripts/tile-sources.sha256 がない。ソースを意図的に更新する場合は .cache/naturalearth/ の zip から再生成してコミットする（README 参照）" >&2
+  exit 1
 fi
+(cd "$CACHE_DIR" && shasum -a 256 -c "$OLDPWD/scripts/tile-sources.sha256")
 
 for layer in "${LAYERS[@]}"; do
   unzip -o "$CACHE_DIR/$layer.zip" -d "$BUILD_DIR/$layer" >/dev/null
@@ -417,7 +423,7 @@ echo "OK: $OUT ($size bytes)"
 - [ ] **Step 4: checksums を記録**
 
 ```bash
-nix develop -c scripts/build-tiles.sh   # 初回: WARN が出るが生成は成功する
+nix develop -c scripts/build-tiles.sh   # 初回: ダウンロード後、checksums 未生成の ERROR で停止する
 (cd .cache/naturalearth && shasum -a 256 *.zip) > scripts/tile-sources.sha256
 nix develop -c scripts/build-tiles.sh   # 2 回目: チェックサム検証込みで成功する
 ```
@@ -919,9 +925,9 @@ Expected: PASS 7 件
     { "id": "nineveh", "kind": "city", "name": "ニネヴェ", "coordinates": [43.153, 36.360], "importance": 2, "description": "アッシリア帝国後期の都。アッシュルバニパル王の図書館が置かれた。" },
     { "id": "memphis", "kind": "city", "name": "メンフィス", "coordinates": [31.251, 29.844], "importance": 1, "description": "古王国時代のエジプトの都。ナイル川下流域に位置する。" },
     { "id": "thebes-egypt", "kind": "city", "name": "テーベ", "coordinates": [32.639, 25.720], "importance": 1, "description": "中王国・新王国時代のエジプトの都。カルナック神殿が造営された。" },
-    { "id": "euphrates", "kind": "terrain", "terrainKind": "river", "name": "ユーフラテス川", "coordinates": [43.5, 34.5], "importance": 1, "description": "メソポタミア文明を育んだ大河。ティグリス川とともに肥沃な三日月地帯を形成した。" },
-    { "id": "tigris", "kind": "terrain", "terrainKind": "river", "name": "ティグリス川", "coordinates": [44.4, 34.9], "importance": 1, "description": "メソポタミア東部を流れる大河。流域にアッシリアの中心都市が栄えた。" },
-    { "id": "nile", "kind": "terrain", "terrainKind": "river", "name": "ナイル川", "coordinates": [30.8, 26.5], "importance": 1, "description": "エジプト文明を育んだ大河。定期的な氾濫が肥沃な耕地をもたらした。" }
+    { "id": "euphrates", "kind": "terrain", "terrainKind": "river", "name": "ユーフラテス川", "coordinates": [42.8, 33.6], "importance": 1, "description": "メソポタミア文明を育んだ大河。ティグリス川とともに肥沃な三日月地帯を形成した。" },
+    { "id": "tigris", "kind": "terrain", "terrainKind": "river", "name": "ティグリス川", "coordinates": [43.9, 34.2], "importance": 1, "description": "メソポタミア東部を流れる大河。流域にアッシリアの中心都市が栄えた。" },
+    { "id": "nile", "kind": "terrain", "terrainKind": "river", "name": "ナイル川", "coordinates": [31.7, 26.5], "importance": 1, "description": "エジプト文明を育んだ大河。定期的な氾濫が肥沃な耕地をもたらした。" }
   ]
 }
 ```
@@ -1316,13 +1322,17 @@ export function MapView({ colorTheme, onMapReady }: MapViewProps) {
   const mapRef = useRef<maplibregl.Map | null>(null);
   const onMapReadyRef = useRef(onMapReady);
   onMapReadyRef.current = onMapReady;
+  const colorThemeRef = useRef(colorTheme);
+  colorThemeRef.current = colorTheme;
+  const appliedColorThemeRef = useRef(colorTheme);
 
   useEffect(() => {
     if (!containerRef.current) return;
     ensurePmtilesProtocol();
+    appliedColorThemeRef.current = colorThemeRef.current;
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: buildMapStyle('light', window.location.origin),
+      style: buildMapStyle(colorThemeRef.current, window.location.origin),
       center: [20, 25],
       zoom: MIN_ZOOM,
       minZoom: MIN_ZOOM,
@@ -1338,7 +1348,9 @@ export function MapView({ colorTheme, onMapReady }: MapViewProps) {
   }, []);
 
   useEffect(() => {
-    mapRef.current?.setStyle(buildMapStyle(colorTheme, window.location.origin));
+    if (!mapRef.current || appliedColorThemeRef.current === colorTheme) return;
+    appliedColorThemeRef.current = colorTheme;
+    mapRef.current.setStyle(buildMapStyle(colorTheme, window.location.origin));
   }, [colorTheme]);
 
   return <div ref={containerRef} className="h-full w-full" data-testid="map-view" />;
@@ -2686,15 +2698,15 @@ export function ImportanceFilterControl({ value, onChange }: ImportanceFilterCon
 
 Run: `pnpm vitest run src/theme/ImportanceFilterControl.test.tsx` → PASS 3 件
 
-- [ ] **Step 3: App の地図右上に配置**
+- [ ] **Step 3: App の地図左上に配置**
 
-`src/app/App.tsx` の `<main>` 内（テーマ選択中のみ表示）:
+`src/app/App.tsx` の `<main>` 内（テーマ選択中のみ表示）。右側・下部の解説パネルと競合しないよう左上に置く:
 
 ```tsx
 import { ImportanceFilterControl } from '../theme/ImportanceFilterControl';
 
 {selection.status === 'loaded' && (
-  <div className="absolute top-4 right-4 z-10">
+  <div className="absolute top-4 left-4 z-10">
     <ImportanceFilterControl value={importanceFilter} onChange={setImportanceFilter} />
   </div>
 )}
@@ -3371,66 +3383,45 @@ git commit -m "fix: correct theme data based on fact-check review"   # 修正が
 
 ---
 
-### Task 19: Cloudflare デプロイ + Range request 実機検証【要ユーザー対話: wrangler 認証】
+### Task 19: R2 + 単一 Worker デプロイ（PMTiles を Range 対応で配信）【要ユーザー対話: wrangler 認証・R2 バケット】
+
+実機検証で Cloudflare Workers 静的アセットが Range request を honor せず（200 で全ファイル返却）PMTiles が動作しないことが判明したため、Protomaps 公式推奨の R2 配信に切り替える。単一 Worker が静的アセット（アプリ）と R2（PMTiles・テーマ JSON）を配信する。
 
 **Files:**
-- Create: `wrangler.jsonc`
+- Create: `wrangler.jsonc`、`src/worker/index.ts`（Worker スクリプト）、`scripts/asset-manifest.ts`（ハッシュ計算 + マニフェスト生成）、`scripts/deploy-r2.ts`（R2 アップロード）、`public/asset-manifest.json`（dev 用・ローカルパス）、`src/data/manifest.ts`（マニフェスト fetch + 型）
+- Modify: `src/theme/fetch.ts`（URL をマニフェストから受け取る）、`src/map/mapStyle.ts`（pmtiles URL をマニフェストから受け取る）、`src/app/App.tsx`（起動時にマニフェスト fetch）、`package.json`（deploy:cf を R2 アップロード込みに）
 
 **Interfaces:**
-- Consumes: `pnpm build` の `dist/`（Task 1）、`public/tiles/basemap.pmtiles`（Task 2）
-- Produces: 本番 URL（`https://world-history-atlas.<account>.workers.dev`）。Task 21 のワークフローは同じ wrangler.jsonc を使う
+- `AssetManifest = { basemap: string; themeIndex: string; themes: Record<string, string> }`
+- Produces: 本番 URL（`https://world-history-atlas.<account>.workers.dev`）。PMTiles への Range request が 206 で返る
 
-- [ ] **Step 1: wrangler.jsonc を作成**
+**設計方針:**
+- 原本 `public/tiles/basemap.pmtiles` と `public/data/themes/*.json` はハッシュなしで repo に残す（dev / E2E はこれを直接使う）
+- `public/asset-manifest.json`（dev 用）はローカルパスを指す: `{ "basemap": "/tiles/basemap.pmtiles", "themeIndex": "/data/themes/index.json", "themes": { "<id>": "/data/themes/<id>.json", ... } }`
+- デプロイ時: 各ファイルの content hash（sha256 先頭 16 桁等）を計算し `basemap-<hash>.pmtiles` / `<id>-<hash>.json` として R2 にアップロード、`/r2/<hashed>` を指す本番マニフェストを `dist/asset-manifest.json` に生成
+- Worker: `/r2/*` の GET は R2 から Range 対応で取得し `Cache-Control: public, max-age=31536000, immutable` で返す。それ以外は静的アセット binding へ委譲
+- アプリは起動時に `/asset-manifest.json` を fetch し、以降 pmtiles・テーマ JSON のアクセスにマニフェストの URL を使う。dev ではローカルパスなので R2 なしで動く（E2E の `**/data/themes/**` route も従来どおり効く）
 
-```jsonc
-{
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "world-history-atlas",
-  "compatibility_date": "2026-07-01",
-  "assets": {
-    "directory": "./dist",
-    "not_found_handling": "single-page-application"
-  },
-  "preview_urls": true
-}
-```
+- [ ] **Step 1: R2 バケット作成【要ユーザー対話】**
 
-アセットのみの Worker（Worker スクリプトなし）。`compatibility_date` は実装日の日付に更新する。
+`wrangler r2 bucket create world-history-atlas-tiles`（ユーザーの Cloudflare アカウントに作成）。認証は `wrangler login` または `CLOUDFLARE_API_TOKEN`（R2 書き込み権限込み）。
 
-- [ ] **Step 2: 【要ユーザー対話】Cloudflare 認証**
+- [ ] **Step 2: Worker スクリプト・wrangler.jsonc・マニフェスト・スクリプト群を実装**
 
-手動デプロイには Cloudflare アカウントの認証が必要。ユーザーに `! npx wrangler login`（ブラウザ認証）を実行してもらうか、`CLOUDFLARE_API_TOKEN` 環境変数の設定を依頼する。**認証が完了するまで次の Step に進まない。**
+`wrangler.jsonc`（`main` + `assets` binding + `r2_buckets` binding、`compatibility_date` は実装日）。`src/worker/index.ts` は `/r2/<key>` を R2 の `env.BUCKET.get(key, { range })` で Range 対応配信、それ以外を `env.ASSETS.fetch()` へ委譲。マニフェスト生成・R2 アップロードスクリプト。アプリ統合（マニフェスト fetch → fetch/mapStyle への URL 注入）。dev / E2E（`pnpm test` `pnpm e2e`）が green のままであることを確認。
 
-- [ ] **Step 3: 手動デプロイ**
+- [ ] **Step 3: デプロイと 206 実機検証**
+
+`pnpm deploy:cf`（ビルド → R2 アップロード → Worker デプロイ）。検証:
 
 ```bash
-pnpm deploy:cf
+URL="https://world-history-atlas.<account>.workers.dev/r2/basemap-<hash>.pmtiles"
+curl -sI -H "Range: bytes=0-16383" "$URL"    # HTTP/2 206 と content-range を確認
 ```
 
-Expected: `Deployed world-history-atlas` と URL が表示される。
+playwright-cli で本番 URL を開き、ベースマップ（陸地・海岸線・河川）が描画されること、テーマ選択 → マーカー → 解説パネルの動線、SPA 深いパス（`/?theme=ancient-orient`）を確認。206 が返らない/描画されない場合はブロック報告。
 
-- [ ] **Step 4: Range request 実機検証（スペックの前提条件の検証）**
-
-```bash
-URL="https://world-history-atlas.<account>.workers.dev/tiles/basemap.pmtiles"
-curl -sI -H "Range: bytes=0-16383" "$URL" | head -8
-```
-
-Expected: `HTTP/2 206` と `content-range: bytes 0-16383/<総バイト数>` が返る。
-
-さらに playwright-cli で本番 URL を開き、以下を確認する:
-- 地図タイルが描画される（Network タブで `basemap.pmtiles` への 206 応答が複数飛んでいる）
-- テーマ選択 → マーカー表示 → 解説パネルの動線が動く
-- SPA の深いパス（`/?theme=ancient-orient`）を直接開いてもアプリが表示される
-
-**206 が返らない・タイルが描画されない場合**: 作業を止めてブロックとして報告し、ユーザーとフォールバック（tippecanoe の z/x/y ディレクトリ出力 + 通常 GET 配信への切替。スペックの「前提条件と検証」参照）への切替を判断する。
-
-- [ ] **Step 5: コミット**
-
-```bash
-git add wrangler.jsonc
-git commit -m "feat: add Cloudflare Workers deployment config"
-```
+- [ ] **Step 4: コミット**（`wrangler.jsonc` / worker / scripts / アプリ変更を明示パスで）
 
 ---
 
@@ -3496,7 +3487,7 @@ gh run watch   # 完了まで確認。失敗したらログを読んで修正（
 
 ---
 
-### Task 21: デプロイ/プレビュー WF + dependabot + minimumReleaseAge【要ユーザー対話: Secrets 登録】
+### Task 21: デプロイ/プレビュー WF + dependabot + cooldown【要ユーザー対話: Secrets 登録】
 
 **Files:**
 - Create: `.github/workflows/deploy.yml`, `.github/workflows/preview.yml`, `.github/dependabot.yml`, `pnpm-workspace.yaml`
@@ -3687,6 +3678,8 @@ nix develop -c pnpm tiles:build
 \`\`\`
 
 生成物 \`public/tiles/basemap.pmtiles\`（25 MiB 未満）はリポジトリにコミットする。
+ダウンロード元を意図的に更新する場合は、取得済み zip から \`scripts/tile-sources.sha256\` を
+再生成してコミットする（\`(cd .cache/naturalearth && shasum -a 256 *.zip) > scripts/tile-sources.sha256\`）。
 
 ## デプロイ
 

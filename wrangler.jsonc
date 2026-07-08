@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "world-history-atlas",
+  "main": "src/worker/index.ts",
+  "compatibility_date": "2026-07-08",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/r2/*", "/asset-manifest.json"]
+  },
+  "r2_buckets": [
+    { "binding": "BUCKET", "bucket_name": "world-history-atlas-tiles" }
+  ],
+  "preview_urls": true
+}

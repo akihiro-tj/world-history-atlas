@@ -1,0 +1,142 @@
+{
+  "id": "age-of-discovery",
+  "title": "大航海時代",
+  "era": "1415年〜1600年頃",
+  "summary": "ポルトガル・スペインを中心にヨーロッパ人が海路で世界に進出し、新大陸との接触が始まった。",
+  "bounds": [-100.0, -56.0, 145.0, 55.0],
+  "features": [
+    {
+      "id": "lisbon",
+      "kind": "city",
+      "name": "リスボン",
+      "coordinates": [-9.139, 38.722],
+      "importance": 1,
+      "description": "エンリケ航海王子のもとで大西洋探検を進めたポルトガルの都。多くの遠征がここから出発した。"
+    },
+    {
+      "id": "ceuta",
+      "kind": "city",
+      "name": "セウタ",
+      "coordinates": [-5.32, 35.889],
+      "importance": 2,
+      "description": "1415年、ポルトガルが北アフリカに獲得した拠点。ポルトガルの海外進出の出発点とされる。"
+    },
+    {
+      "id": "seville",
+      "kind": "city",
+      "name": "セビリア",
+      "coordinates": [-5.985, 37.389],
+      "importance": 2,
+      "description": "スペインの貿易独占機関カサ=デ=コントラタシオンが置かれた港市。新大陸貿易を管理した。"
+    },
+    {
+      "id": "san-salvador",
+      "kind": "city",
+      "name": "サンサルバドル島",
+      "coordinates": [-74.483, 24.1],
+      "importance": 1,
+      "description": "1492年、コロンブスが到達したとされる西インド諸島の島。ヨーロッパ人による新大陸到達の第一歩となった。"
+    },
+    {
+      "id": "tenochtitlan",
+      "kind": "city",
+      "name": "テノチティトラン",
+      "coordinates": [-99.133, 19.434],
+      "importance": 1,
+      "description": "アステカ王国の都。1521年、コルテスの率いるスペイン軍により征服された。"
+    },
+    {
+      "id": "cusco",
+      "kind": "city",
+      "name": "クスコ",
+      "coordinates": [-71.985, -13.529],
+      "importance": 1,
+      "description": "インカ帝国の都。1533年、ピサロの率いるスペイン軍により征服された。"
+    },
+    {
+      "id": "calicut",
+      "kind": "city",
+      "name": "カリカット",
+      "coordinates": [75.78, 11.259],
+      "importance": 1,
+      "description": "1498年、ヴァスコ=ダ=ガマが到達したインド西岸の港市。ポルトガルによるインド航路開拓の目的地となった。"
+    },
+    {
+      "id": "goa",
+      "kind": "city",
+      "name": "ゴア",
+      "coordinates": [73.912, 15.502],
+      "importance": 2,
+      "description": "1510年にポルトガルが獲得した拠点。ポルトガル領インドの中心地として繁栄した。"
+    },
+    {
+      "id": "malacca",
+      "kind": "city",
+      "name": "マラッカ",
+      "coordinates": [102.241, 2.196],
+      "importance": 1,
+      "description": "1511年にポルトガルが占領した海峡沿いの港市。東南アジア交易の要衝であった。"
+    },
+    {
+      "id": "macau",
+      "kind": "city",
+      "name": "マカオ",
+      "coordinates": [113.544, 22.199],
+      "importance": 2,
+      "description": "1557年、ポルトガルが居住権を得た中国南岸の港市。対中国貿易の拠点となった。"
+    },
+    {
+      "id": "manila",
+      "kind": "city",
+      "name": "マニラ",
+      "coordinates": [120.982, 14.604],
+      "importance": 2,
+      "description": "1571年にスペインが建設した拠点。ガレオン貿易でメキシコのアカプルコと結ばれた。"
+    },
+    {
+      "id": "cape-of-good-hope",
+      "kind": "terrain",
+      "terrainKind": "region",
+      "name": "喜望峰",
+      "coordinates": [18.47, -34.355],
+      "importance": 1,
+      "description": "1488年、バルトロメウ=ディアスが到達したアフリカ南端の岬。インド航路開拓の足がかりとなった。"
+    },
+    {
+      "id": "atlantic-ocean",
+      "kind": "terrain",
+      "terrainKind": "sea",
+      "name": "大西洋",
+      "coordinates": [-30.0, 10.0],
+      "importance": 2,
+      "description": "ヨーロッパとアメリカ大陸を結ぶ大洋。大航海時代を通じ新旧両大陸を結ぶ交流路となった。"
+    },
+    {
+      "id": "pacific-ocean",
+      "kind": "terrain",
+      "terrainKind": "sea",
+      "name": "太平洋",
+      "coordinates": [-79.5, 8.0],
+      "importance": 2,
+      "description": "1513年、バルボアがパナマ地峡を越えて初めてヨーロッパ人として望んだとされる大洋。"
+    },
+    {
+      "id": "indian-ocean",
+      "kind": "terrain",
+      "terrainKind": "sea",
+      "name": "インド洋",
+      "coordinates": [70.0, 5.0],
+      "importance": 2,
+      "description": "アジア交易の舞台となった大洋。ポルトガルはこの航路を経て香辛料貿易に参入した。"
+    },
+    {
+      "id": "strait-of-magellan",
+      "kind": "terrain",
+      "terrainKind": "strait",
+      "name": "マゼラン海峡",
+      "coordinates": [-70.783, -53.475],
+      "importance": 1,
+      "description": "1520年、マゼラン船隊が通過した南アメリカ南端の海峡。太平洋への航路を開いた。"
+    }
+  ]
+}

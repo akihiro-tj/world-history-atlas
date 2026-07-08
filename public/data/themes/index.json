@@ -1,0 +1,62 @@
+[
+  {
+    "id": "ancient-orient",
+    "title": "古代オリエント",
+    "era": "前3000年頃〜前330年",
+    "order": 1
+  },
+  {
+    "id": "ancient-greece",
+    "title": "古代ギリシア",
+    "era": "前800年頃〜前338年",
+    "order": 2
+  },
+  {
+    "id": "roman-empire",
+    "title": "ローマ帝国",
+    "era": "前27年〜後476年",
+    "order": 3
+  },
+  {
+    "id": "ancient-india",
+    "title": "古代インド",
+    "era": "前2600年頃〜後550年",
+    "order": 4
+  },
+  {
+    "id": "chinese-dynasties",
+    "title": "中国王朝（秦漢〜隋唐）",
+    "era": "前221年〜後907年",
+    "order": 5
+  },
+  {
+    "id": "islamic-world",
+    "title": "イスラーム世界の成立と拡大",
+    "era": "610年〜1258年",
+    "order": 6
+  },
+  {
+    "id": "medieval-europe",
+    "title": "中世ヨーロッパ",
+    "era": "476年〜1453年",
+    "order": 7
+  },
+  {
+    "id": "mongol-empire",
+    "title": "モンゴル帝国と東西交流",
+    "era": "1206年〜1368年",
+    "order": 8
+  },
+  {
+    "id": "age-of-discovery",
+    "title": "大航海時代",
+    "era": "1415年〜1600年頃",
+    "order": 9
+  },
+  {
+    "id": "early-modern-europe",
+    "title": "近世ヨーロッパ",
+    "era": "1517年〜1789年",
+    "order": 10
+  }
+]

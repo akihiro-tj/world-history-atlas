@@ -1,0 +1,100 @@
+{
+  "id": "chinese-dynasties",
+  "title": "中国王朝（秦漢〜隋唐）",
+  "era": "前221年〜後907年",
+  "summary": "秦の統一に始まり、漢・魏晋南北朝を経て隋・唐の統一帝国が東アジアに繁栄した。",
+  "bounds": [93.0, 18.0, 125.0, 45.0],
+  "features": [
+    {
+      "id": "xianyang",
+      "kind": "city",
+      "name": "咸陽",
+      "coordinates": [108.709, 34.33],
+      "importance": 1,
+      "description": "秦の都。始皇帝が中国を統一しここを都とした。"
+    },
+    {
+      "id": "changan",
+      "kind": "city",
+      "name": "長安",
+      "coordinates": [108.929, 34.258],
+      "importance": 1,
+      "description": "前漢・唐の都。シルクロードの東の起点として国際色豊かな大都市に発展した。"
+    },
+    {
+      "id": "luoyang",
+      "kind": "city",
+      "name": "洛陽",
+      "coordinates": [112.454, 34.62],
+      "importance": 1,
+      "description": "後漢・魏の都、唐の副都（東都）。中国北部の政治・文化の中心地であった。"
+    },
+    {
+      "id": "chengdu",
+      "kind": "city",
+      "name": "成都",
+      "coordinates": [104.067, 30.573],
+      "importance": 2,
+      "description": "三国時代、蜀漢（劉備）の都。四川盆地の中心都市として栄えた。"
+    },
+    {
+      "id": "jiankang",
+      "kind": "city",
+      "name": "建業（建康）",
+      "coordinates": [118.797, 32.06],
+      "importance": 2,
+      "description": "三国の呉から東晋・南朝にかけての都。江南開発の中心地となった。"
+    },
+    {
+      "id": "dunhuang",
+      "kind": "city",
+      "name": "敦煌",
+      "coordinates": [94.662, 40.142],
+      "importance": 2,
+      "description": "シルクロードの要衝。莫高窟の仏教石窟群で知られる。"
+    },
+    {
+      "id": "liangzhou",
+      "kind": "city",
+      "name": "涼州",
+      "coordinates": [102.639, 37.934],
+      "importance": 3,
+      "description": "河西回廊の要衝。シルクロード交易とともに軍事上の要地としても重視された。"
+    },
+    {
+      "id": "guangzhou",
+      "kind": "city",
+      "name": "広州",
+      "coordinates": [113.264, 23.129],
+      "importance": 2,
+      "description": "南海交易の拠点港市。海上のシルクロードを通じた対外交易で栄えた。"
+    },
+    {
+      "id": "yellow-river",
+      "kind": "terrain",
+      "terrainKind": "river",
+      "name": "黄河",
+      "coordinates": [113.0, 35.0],
+      "importance": 1,
+      "description": "中国文明発祥の地とされる大河。中原の農耕文明を育んだ。"
+    },
+    {
+      "id": "yangtze-river",
+      "kind": "terrain",
+      "terrainKind": "river",
+      "name": "長江",
+      "coordinates": [115.0, 30.5],
+      "importance": 1,
+      "description": "中国最長の大河。江南開発とともに経済的重要性を増した。"
+    },
+    {
+      "id": "gobi-desert",
+      "kind": "terrain",
+      "terrainKind": "desert",
+      "name": "ゴビ砂漠",
+      "coordinates": [105.0, 42.0],
+      "importance": 3,
+      "description": "モンゴル高原南部に広がる砂漠。北方遊牧民との境界地帯となった。"
+    }
+  ]
+}

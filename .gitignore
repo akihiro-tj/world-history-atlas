@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.cache/
+.wrangler/
+.superpowers/
+test-results/
+playwright-report/
+.pnpm-store/
+.features-gen/
+.playwright-cli/
