@@ -15,15 +15,28 @@ function jsonResponse(body: unknown): typeof fetch {
 }
 
 describe('fetchThemeIndex', () => {
+  it('渡した URL をそのまま叩く', async () => {
+    let requestedUrl = '';
+    const spy: typeof fetch = async (input) => {
+      requestedUrl = String(input);
+      return new Response(JSON.stringify(validIndex), { status: 200 });
+    };
+    await fetchThemeIndex('/data/themes/index.json', spy);
+    expect(requestedUrl).toBe('/data/themes/index.json');
+  });
+
   it('正しい JSON なら ok で返す', async () => {
-    const result = await fetchThemeIndex(jsonResponse(validIndex));
+    const result = await fetchThemeIndex(
+      '/data/themes/index.json',
+      jsonResponse(validIndex),
+    );
     expect(result).toEqual({ ok: true, value: validIndex });
   });
 
   it('HTTP エラーなら network エラー', async () => {
     const notFound: typeof fetch = async () =>
       new Response('not found', { status: 404 });
-    const result = await fetchThemeIndex(notFound);
+    const result = await fetchThemeIndex('/data/themes/index.json', notFound);
     expect(result).toEqual({ ok: false, error: { type: 'network' } });
   });
 
@@ -31,12 +44,15 @@ describe('fetchThemeIndex', () => {
     const broken: typeof fetch = async () => {
       throw new TypeError('failed to fetch');
     };
-    const result = await fetchThemeIndex(broken);
+    const result = await fetchThemeIndex('/data/themes/index.json', broken);
     expect(result).toEqual({ ok: false, error: { type: 'network' } });
   });
 
   it('スキーマ違反なら invalid-data エラー', async () => {
-    const result = await fetchThemeIndex(jsonResponse([{ id: 'x' }]));
+    const result = await fetchThemeIndex(
+      '/data/themes/index.json',
+      jsonResponse([{ id: 'x' }]),
+    );
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error.type).toBe('invalid-data');
   });
@@ -44,20 +60,20 @@ describe('fetchThemeIndex', () => {
   it('JSON でないレスポンスなら invalid-data エラー', async () => {
     const html: typeof fetch = async () =>
       new Response('<html></html>', { status: 200 });
-    const result = await fetchThemeIndex(html);
+    const result = await fetchThemeIndex('/data/themes/index.json', html);
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error.type).toBe('invalid-data');
   });
 });
 
 describe('fetchTheme', () => {
-  it('テーマ id から URL を組み立てる', async () => {
+  it('渡した URL をそのまま叩く', async () => {
     let requestedUrl = '';
     const spy: typeof fetch = async (input) => {
       requestedUrl = String(input);
       return new Response('{}', { status: 404 });
     };
-    await fetchTheme('ancient-orient', spy);
+    await fetchTheme('/data/themes/ancient-orient.json', spy);
     expect(requestedUrl).toBe('/data/themes/ancient-orient.json');
   });
 });

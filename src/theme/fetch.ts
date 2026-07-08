@@ -12,19 +12,20 @@ export type ThemeDataError =
   | { type: 'invalid-data'; detail: string };
 
 export function fetchThemeIndex(
+  url: string,
   fetchFn: typeof fetch = fetch,
 ): Promise<Result<ThemeIndexEntry[], ThemeDataError>> {
-  return fetchJson('/data/themes/index.json', themeIndexSchema, fetchFn);
+  return fetchJson(url, themeIndexSchema, fetchFn);
 }
 
 export function fetchTheme(
-  id: string,
+  url: string,
   fetchFn: typeof fetch = fetch,
 ): Promise<Result<Theme, ThemeDataError>> {
-  return fetchJson(`/data/themes/${id}.json`, themeSchema, fetchFn);
+  return fetchJson(url, themeSchema, fetchFn);
 }
 
-async function fetchJson<T>(
+export async function fetchJson<T>(
   url: string,
   schema: ZodType<T>,
   fetchFn: typeof fetch,
