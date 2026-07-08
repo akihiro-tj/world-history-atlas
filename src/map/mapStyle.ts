@@ -7,6 +7,7 @@ export const MAX_ZOOM = 8;
 export function buildMapStyle(
   colorTheme: ColorTheme,
   origin: string,
+  basemapPath: string,
 ): StyleSpecification {
   const colors = MAP_COLORS[colorTheme];
   return {
@@ -14,7 +15,7 @@ export function buildMapStyle(
     sources: {
       basemap: {
         type: 'vector',
-        url: `pmtiles://${origin}/tiles/basemap.pmtiles`,
+        url: `pmtiles://${origin}${basemapPath}`,
       },
     },
     layers: [

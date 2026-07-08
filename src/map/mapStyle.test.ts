@@ -2,13 +2,28 @@ import { describe, expect, it } from 'vitest';
 import { buildMapStyle } from './mapStyle';
 
 describe('buildMapStyle', () => {
-  const style = buildMapStyle('light', 'http://localhost:5173');
+  const style = buildMapStyle(
+    'light',
+    'http://localhost:5173',
+    '/tiles/basemap.pmtiles',
+  );
 
   it('PMTiles ソースを絶対 URL で参照する', () => {
     const source = style.sources.basemap;
     expect(source).toMatchObject({
       type: 'vector',
       url: 'pmtiles://http://localhost:5173/tiles/basemap.pmtiles',
+    });
+  });
+
+  it('basemapPath を反映した URL を組み立てる', () => {
+    const hashedStyle = buildMapStyle(
+      'light',
+      'http://localhost:5173',
+      '/r2/basemap-abc123.pmtiles',
+    );
+    expect(hashedStyle.sources.basemap).toMatchObject({
+      url: 'pmtiles://http://localhost:5173/r2/basemap-abc123.pmtiles',
     });
   });
 
@@ -30,7 +45,11 @@ describe('buildMapStyle', () => {
   });
 
   it('ライトとダークで配色が異なる', () => {
-    const dark = buildMapStyle('dark', 'http://localhost:5173');
+    const dark = buildMapStyle(
+      'dark',
+      'http://localhost:5173',
+      '/tiles/basemap.pmtiles',
+    );
     expect(dark.layers[0]).not.toEqual(style.layers[0]);
   });
 });

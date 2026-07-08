@@ -15,10 +15,11 @@ function ensurePmtilesProtocol(): void {
 
 type MapViewProps = {
   colorTheme: ColorTheme;
+  basemapPath: string;
   onMapReady?: (map: maplibregl.Map) => void;
 };
 
-export function MapView({ colorTheme, onMapReady }: MapViewProps) {
+export function MapView({ colorTheme, basemapPath, onMapReady }: MapViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const onMapReadyRef = useRef(onMapReady);
@@ -26,6 +27,8 @@ export function MapView({ colorTheme, onMapReady }: MapViewProps) {
   const colorThemeRef = useRef(colorTheme);
   colorThemeRef.current = colorTheme;
   const appliedColorThemeRef = useRef(colorTheme);
+  const basemapPathRef = useRef(basemapPath);
+  basemapPathRef.current = basemapPath;
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -33,7 +36,11 @@ export function MapView({ colorTheme, onMapReady }: MapViewProps) {
     appliedColorThemeRef.current = colorThemeRef.current;
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: buildMapStyle(colorThemeRef.current, window.location.origin),
+      style: buildMapStyle(
+        colorThemeRef.current,
+        window.location.origin,
+        basemapPathRef.current,
+      ),
       center: [20, 25],
       zoom: MIN_ZOOM,
       minZoom: MIN_ZOOM,
@@ -51,8 +58,10 @@ export function MapView({ colorTheme, onMapReady }: MapViewProps) {
   useEffect(() => {
     if (!mapRef.current || appliedColorThemeRef.current === colorTheme) return;
     appliedColorThemeRef.current = colorTheme;
-    mapRef.current.setStyle(buildMapStyle(colorTheme, window.location.origin));
-  }, [colorTheme]);
+    mapRef.current.setStyle(
+      buildMapStyle(colorTheme, window.location.origin, basemapPath),
+    );
+  }, [colorTheme, basemapPath]);
 
   return (
     <div ref={containerRef} className="h-full w-full" data-testid="map-view" />
