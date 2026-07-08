@@ -1,12 +1,18 @@
 import type maplibregl from 'maplibre-gl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type AssetManifest, fetchAssetManifest } from '../data/manifest';
 import { FeatureMarkers } from '../map/FeatureMarkers';
 import { MapView } from '../map/MapView';
 import type { ColorTheme } from '../map/mapColors';
 import { ErrorView } from '../shared/ErrorView';
+import { err, type Result } from '../shared/result';
 import { isWebgl2Supported } from '../shared/webgl';
 import { DetailPanel } from '../theme/DetailPanel';
-import { fetchTheme, fetchThemeIndex } from '../theme/fetch';
+import {
+  fetchTheme,
+  fetchThemeIndex,
+  type ThemeDataError,
+} from '../theme/fetch';
 import {
   filterFeaturesByImportance,
   type ImportanceFilter,
@@ -23,6 +29,11 @@ import {
   resolveInitialColorTheme,
   toggleColorTheme,
 } from './colorTheme';
+
+type ManifestState =
+  | { status: 'loading' }
+  | { status: 'loaded'; manifest: AssetManifest }
+  | { status: 'error' };
 
 type ThemeIndexState =
   | { status: 'loading' }
@@ -41,6 +52,9 @@ function syncThemeToUrl(themeId: string | undefined): void {
 }
 
 export function App() {
+  const [manifestState, setManifestState] = useState<ManifestState>({
+    status: 'loading',
+  });
   const [indexState, setIndexState] = useState<ThemeIndexState>({
     status: 'loading',
   });
@@ -60,12 +74,36 @@ export function App() {
   );
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
+  const latestManifestRequestRef = useRef(0);
+  const loadManifest = useCallback(() => {
+    const requestId = ++latestManifestRequestRef.current;
+    setManifestState({ status: 'loading' });
+    void fetchAssetManifest().then((result) => {
+      if (requestId !== latestManifestRequestRef.current) return;
+      setManifestState(
+        result.ok
+          ? { status: 'loaded', manifest: result.value }
+          : { status: 'error' },
+      );
+    });
+  }, []);
+
+  useEffect(() => {
+    loadManifest();
+  }, [loadManifest]);
+
   const selectTheme = useCallback(
     (themeId: string, options?: { fallbackToNoneOnError: boolean }) => {
+      if (manifestState.status !== 'loaded') return;
+      const themeUrl = manifestState.manifest.themes[themeId];
       setSelectedFeatureId(undefined);
       setSelection({ status: 'loading', themeId });
       syncThemeToUrl(themeId);
-      void fetchTheme(themeId).then((result) => {
+      const themeResult: Promise<Result<Theme, ThemeDataError>> =
+        themeUrl !== undefined
+          ? fetchTheme(themeUrl)
+          : Promise.resolve(err({ type: 'network' }));
+      void themeResult.then((result) => {
         setSelection((current) => {
           if (current.status !== 'loading' || current.themeId !== themeId) {
             return current;
@@ -79,14 +117,15 @@ export function App() {
         });
       });
     },
-    [],
+    [manifestState],
   );
 
   const latestIndexRequestRef = useRef(0);
   const loadThemeIndex = useCallback(() => {
+    if (manifestState.status !== 'loaded') return;
     const requestId = ++latestIndexRequestRef.current;
     setIndexState({ status: 'loading' });
-    void fetchThemeIndex().then((result) => {
+    void fetchThemeIndex(manifestState.manifest.themeIndex).then((result) => {
       if (requestId !== latestIndexRequestRef.current) return;
       setIndexState(
         result.ok
@@ -94,7 +133,7 @@ export function App() {
           : { status: 'error' },
       );
     });
-  }, []);
+  }, [manifestState]);
 
   useEffect(() => {
     loadThemeIndex();
@@ -154,6 +193,25 @@ export function App() {
   const selectedFeature = visibleFeatures.find(
     (feature) => feature.id === selectedFeatureId,
   );
+
+  if (manifestState.status === 'loading') {
+    return (
+      <div className="flex h-dvh items-center justify-center bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100">
+        <p className="text-sm">読み込み中…</p>
+      </div>
+    );
+  }
+
+  if (manifestState.status === 'error') {
+    return (
+      <div className="flex h-dvh items-center justify-center bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100">
+        <ErrorView
+          message="マニフェストの取得に失敗しました"
+          onRetry={loadManifest}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-dvh flex-col bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100">
@@ -216,7 +274,11 @@ export function App() {
         </aside>
         <main className="relative min-w-0 flex-1">
           {isWebglAvailable ? (
-            <MapView colorTheme={colorTheme} onMapReady={setMap} />
+            <MapView
+              colorTheme={colorTheme}
+              basemapPath={manifestState.manifest.basemap}
+              onMapReady={setMap}
+            />
           ) : (
             <p className="flex h-full items-center justify-center p-8 text-center text-sm">
               {

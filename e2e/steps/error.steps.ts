@@ -6,6 +6,7 @@ Given('テーマデータの取得が失敗する状態である', async ({ page
 });
 
 When('データ取得を正常に戻す', async ({ page }) => {
+  await expect(page.getByRole('button', { name: '再試行' })).toBeVisible();
   await page.unroute('**/data/themes/**');
 });
 

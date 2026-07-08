@@ -2,9 +2,19 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { StrictMode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { fetchAssetManifest } from '../data/manifest';
 import { isWebgl2Supported } from '../shared/webgl';
 import { fetchThemeIndex } from '../theme/fetch';
 import { App } from './App';
+
+const manifestFixture = {
+  basemap: '/tiles/basemap.pmtiles',
+  themeIndex: '/data/themes/index.json',
+  themes: {
+    'ancient-orient': '/data/themes/ancient-orient.json',
+    'broken-theme': '/data/themes/broken-theme.json',
+  },
+};
 
 const { fakeMap, mapHandlers } = vi.hoisted(() => {
   const mapHandlers = new Map<string, (...args: unknown[]) => void>();
@@ -29,11 +39,17 @@ vi.mock('../shared/webgl', () => ({
 vi.mock('../map/MapView', async () => {
   const { useEffect } = await import('react');
   return {
-    MapView: ({ onMapReady }: { onMapReady?: (map: unknown) => void }) => {
+    MapView: ({
+      basemapPath,
+      onMapReady,
+    }: {
+      basemapPath: string;
+      onMapReady?: (map: unknown) => void;
+    }) => {
       useEffect(() => {
         onMapReady?.(fakeMap);
       }, [onMapReady]);
-      return <div data-testid="map-view" />;
+      return <div data-testid="map-view" data-basemap-path={basemapPath} />;
     },
   };
 });
@@ -61,6 +77,10 @@ vi.mock('../map/FeatureMarkers', () => ({
   ),
 }));
 
+vi.mock('../data/manifest', () => ({
+  fetchAssetManifest: vi.fn(async () => ({ ok: true, value: manifestFixture })),
+}));
+
 vi.mock('../theme/fetch', () => ({
   fetchThemeIndex: vi.fn(async () => ({
     ok: true,
@@ -79,8 +99,8 @@ vi.mock('../theme/fetch', () => ({
       },
     ],
   })),
-  fetchTheme: vi.fn(async (id: string) =>
-    id === 'ancient-orient'
+  fetchTheme: vi.fn(async (url: string) =>
+    url === manifestFixture.themes['ancient-orient']
       ? {
           ok: true,
           value: {
@@ -109,6 +129,10 @@ beforeEach(() => {
   fakeMap.fitBounds.mockClear();
   mapHandlers.clear();
   vi.mocked(isWebgl2Supported).mockReturnValue(true);
+  vi.mocked(fetchAssetManifest).mockResolvedValue({
+    ok: true,
+    value: manifestFixture,
+  });
 });
 
 afterEach(() => {
@@ -175,6 +199,21 @@ describe('App', () => {
     ).toBeInTheDocument();
   });
 
+  it('マニフェストの取得失敗でエラービューが出て、再試行で回復する', async () => {
+    vi.mocked(fetchAssetManifest).mockResolvedValueOnce({
+      ok: false,
+      error: { type: 'network' },
+    });
+    render(<App />);
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'マニフェストの取得に失敗しました',
+    );
+    await userEvent.click(screen.getByRole('button', { name: '再試行' }));
+    expect(
+      await screen.findByRole('button', { name: /古代オリエント/ }),
+    ).toBeInTheDocument();
+  });
+
   it('WebGL2 非対応なら地図の代わりに案内文を表示する', async () => {
     vi.mocked(isWebgl2Supported).mockReturnValue(false);
     render(<App />);
@@ -183,24 +222,24 @@ describe('App', () => {
     expect(screen.queryByTestId('map-view')).not.toBeInTheDocument();
   });
 
-  it('古い index レスポンスは新しいレスポンスを上書きしない', async () => {
+  it('古いマニフェスト応答は新しい応答を上書きしない', async () => {
     let resolveStale!: (
-      value: Awaited<ReturnType<typeof fetchThemeIndex>>,
+      value: Awaited<ReturnType<typeof fetchAssetManifest>>,
     ) => void;
     let resolveLatest!: (
-      value: Awaited<ReturnType<typeof fetchThemeIndex>>,
+      value: Awaited<ReturnType<typeof fetchAssetManifest>>,
     ) => void;
-    const stale = new Promise<Awaited<ReturnType<typeof fetchThemeIndex>>>(
+    const stale = new Promise<Awaited<ReturnType<typeof fetchAssetManifest>>>(
       (resolve) => {
         resolveStale = resolve;
       },
     );
-    const latest = new Promise<Awaited<ReturnType<typeof fetchThemeIndex>>>(
+    const latest = new Promise<Awaited<ReturnType<typeof fetchAssetManifest>>>(
       (resolve) => {
         resolveLatest = resolve;
       },
     );
-    vi.mocked(fetchThemeIndex)
+    vi.mocked(fetchAssetManifest)
       .mockReturnValueOnce(stale)
       .mockReturnValueOnce(latest);
 
@@ -210,35 +249,31 @@ describe('App', () => {
       </StrictMode>,
     );
 
-    resolveLatest({
-      ok: true,
-      value: [
-        { id: 'ancient-orient', title: '古代オリエント', era: 'era', order: 1 },
-      ],
-    });
-    expect(
-      await screen.findByRole('button', { name: /古代オリエント/ }),
-    ).toBeInTheDocument();
+    resolveLatest({ ok: true, value: manifestFixture });
+    expect(await screen.findByTestId('map-view')).toHaveAttribute(
+      'data-basemap-path',
+      manifestFixture.basemap,
+    );
 
     resolveStale({
       ok: true,
-      value: [{ id: 'stale', title: '古いテーマ', era: 'era', order: 1 }],
+      value: { ...manifestFixture, basemap: '/tiles/basemap-stale.pmtiles' },
     });
     await waitFor(() =>
-      expect(
-        screen.getByRole('button', { name: /古代オリエント/ }),
-      ).toBeInTheDocument(),
+      expect(screen.getByTestId('map-view')).toHaveAttribute(
+        'data-basemap-path',
+        manifestFixture.basemap,
+      ),
     );
-    expect(
-      screen.queryByRole('button', { name: /古いテーマ/ }),
-    ).not.toBeInTheDocument();
   });
 
   it('不正な直リンクは未選択にフォールバックし URL から theme を除去する', async () => {
     window.history.replaceState(null, '', '/?theme=no-such-theme');
     render(<App />);
-    expect(await screen.findByTestId('empty-state')).toBeInTheDocument();
-    expect(window.location.search).toBe('');
+    await waitFor(() => {
+      expect(screen.getByTestId('empty-state')).toBeInTheDocument();
+      expect(window.location.search).toBe('');
+    });
   });
 
   it('有効な直リンクで読み込みから fitBounds まで到達する', async () => {
