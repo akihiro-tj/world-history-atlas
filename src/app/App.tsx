@@ -1,5 +1,12 @@
 import type maplibregl from 'maplibre-gl';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { type AssetManifest, fetchAssetManifest } from '../data/manifest';
 import { FeatureMarkers } from '../map/FeatureMarkers';
 import { MapView } from '../map/MapView';
@@ -154,7 +161,7 @@ export function App() {
     }
   }, [selectTheme]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.documentElement.dataset.colorTheme = colorTheme;
   }, [colorTheme]);
 
