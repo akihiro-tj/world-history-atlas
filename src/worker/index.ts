@@ -56,9 +56,10 @@ async function serveFromR2(
     return new Response('Not Found', { status: 404 });
   }
 
+  const hasRange = request.headers.has('range');
   const object = await env.BUCKET.get(key, {
     onlyIf: request.headers,
-    range: request.headers,
+    range: hasRange ? request.headers : undefined,
   });
 
   if (object === null) {
