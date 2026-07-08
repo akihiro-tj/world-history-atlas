@@ -3,6 +3,7 @@ import { type ColorTheme, MAP_COLORS } from './mapColors';
 
 export const MIN_ZOOM = 1;
 export const MAX_ZOOM = 8;
+export const BASEMAP_SOURCE_ID = 'basemap';
 
 export function buildMapStyle(
   colorTheme: ColorTheme,
@@ -13,7 +14,7 @@ export function buildMapStyle(
   return {
     version: 8,
     sources: {
-      basemap: {
+      [BASEMAP_SOURCE_ID]: {
         type: 'vector',
         url: `pmtiles://${origin}${basemapPath}`,
       },
@@ -27,28 +28,28 @@ export function buildMapStyle(
       {
         id: 'land',
         type: 'fill',
-        source: 'basemap',
+        source: BASEMAP_SOURCE_ID,
         'source-layer': 'land',
         paint: { 'fill-color': colors.land },
       },
       {
         id: 'land-outline',
         type: 'line',
-        source: 'basemap',
+        source: BASEMAP_SOURCE_ID,
         'source-layer': 'land',
         paint: { 'line-color': colors.landOutline, 'line-width': 0.6 },
       },
       {
         id: 'rivers',
         type: 'line',
-        source: 'basemap',
+        source: BASEMAP_SOURCE_ID,
         'source-layer': 'rivers',
         paint: { 'line-color': colors.river, 'line-width': 1 },
       },
       {
         id: 'lakes',
         type: 'fill',
-        source: 'basemap',
+        source: BASEMAP_SOURCE_ID,
         'source-layer': 'lakes',
         paint: { 'fill-color': colors.lake },
       },

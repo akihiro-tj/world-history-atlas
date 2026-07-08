@@ -16,10 +16,14 @@ const manifestFixture = {
   },
 };
 
-const { fakeMap, mapHandlers } = vi.hoisted(() => {
+const { fakeMap, mapHandlers, mapErrorHandlerRef } = vi.hoisted(() => {
   const mapHandlers = new Map<string, (...args: unknown[]) => void>();
+  const mapErrorHandlerRef: {
+    current: ((message: string) => void) | undefined;
+  } = { current: undefined };
   return {
     mapHandlers,
+    mapErrorHandlerRef,
     fakeMap: {
       fitBounds: vi.fn(),
       on: vi.fn((event: string, handler: (...args: unknown[]) => void) => {
@@ -42,13 +46,21 @@ vi.mock('../map/MapView', async () => {
     MapView: ({
       basemapPath,
       onMapReady,
+      onError,
     }: {
       basemapPath: string;
       onMapReady?: (map: unknown) => void;
+      onError?: (message: string) => void;
     }) => {
       useEffect(() => {
         onMapReady?.(fakeMap);
       }, [onMapReady]);
+      useEffect(() => {
+        mapErrorHandlerRef.current = onError;
+        return () => {
+          mapErrorHandlerRef.current = undefined;
+        };
+      }, [onError]);
       return <div data-testid="map-view" data-basemap-path={basemapPath} />;
     },
   };
@@ -128,6 +140,7 @@ vi.mock('../theme/fetch', () => ({
 beforeEach(() => {
   fakeMap.fitBounds.mockClear();
   mapHandlers.clear();
+  mapErrorHandlerRef.current = undefined;
   vi.mocked(isWebgl2Supported).mockReturnValue(true);
   vi.mocked(fetchAssetManifest).mockResolvedValue({
     ok: true,
@@ -325,5 +338,22 @@ describe('App', () => {
     );
 
     expect(screen.queryByTestId('detail-panel')).not.toBeInTheDocument();
+  });
+
+  it('地図の読み込みエラーでエラービューを表示し、再試行で消える', async () => {
+    render(<App />);
+    await screen.findByTestId('map-view');
+
+    act(() => {
+      mapErrorHandlerRef.current?.('地図の読み込みに失敗しました');
+    });
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      '地図の読み込みに失敗しました',
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: '再試行' }));
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 });

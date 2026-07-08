@@ -73,6 +73,8 @@ export function App() {
     ),
   );
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [mapError, setMapError] = useState<string | undefined>(undefined);
+  const [mapRetryCount, setMapRetryCount] = useState(0);
 
   const latestManifestRequestRef = useRef(0);
   const loadManifest = useCallback(() => {
@@ -157,6 +159,11 @@ export function App() {
     window.localStorage.setItem(COLOR_THEME_STORAGE_KEY, next);
     setColorTheme(next);
   };
+
+  const handleMapRetry = useCallback(() => {
+    setMapError(undefined);
+    setMapRetryCount((count) => count + 1);
+  }, []);
 
   useEffect(() => {
     if (map && selection.status === 'loaded') {
@@ -275,9 +282,11 @@ export function App() {
         <main className="relative min-w-0 flex-1">
           {isWebglAvailable ? (
             <MapView
+              key={mapRetryCount}
               colorTheme={colorTheme}
               basemapPath={manifestState.manifest.basemap}
               onMapReady={setMap}
+              onError={setMapError}
             />
           ) : (
             <p className="flex h-full items-center justify-center p-8 text-center text-sm">
@@ -285,6 +294,11 @@ export function App() {
                 'お使いのブラウザは WebGL2 に対応していないため、地図を表示できません。最新のブラウザでお試しください。'
               }
             </p>
+          )}
+          {mapError !== undefined && (
+            <div className="absolute inset-0 z-20 flex items-center justify-center">
+              <ErrorView message={mapError} onRetry={handleMapRetry} />
+            </div>
           )}
           <FeatureMarkers
             map={map}
