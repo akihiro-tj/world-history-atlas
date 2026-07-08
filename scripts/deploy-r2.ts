@@ -134,8 +134,9 @@ async function main(): Promise<void> {
   console.log('dist/asset-manifest.json:');
   console.log(JSON.stringify(manifest, null, 2));
 
-  // Vite が public/ から dist へ複製した原本は R2 で配信するため静的アセットには不要。
-  // 二重アップロードを避けるため R2 アップロード後に dist から除去する。
+  // Originals Vite copied from public/ into dist are served from R2, so they
+  // are redundant as static assets. Drop them after the R2 upload to avoid
+  // uploading them twice.
   await rm(path.join(DIST_DIR, 'tiles'), { recursive: true, force: true });
   await rm(path.join(DIST_DIR, 'data'), { recursive: true, force: true });
 }

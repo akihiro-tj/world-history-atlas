@@ -182,8 +182,8 @@ export function App() {
     }
   }, [map, selection]);
 
-  // パネル外（地図の余白）クリックで閉じる。マーカーのクリックは
-  // buildMarkerElement 内の stopPropagation により map まで届かない
+  // Close the panel on map-background clicks. Marker clicks are stopped by
+  // stopPropagation in buildMarkerElement, so they never reach the map.
   useEffect(() => {
     if (!map) return;
     const closePanel = () => setSelectedFeatureId(undefined);
@@ -262,7 +262,7 @@ export function App() {
             type="button"
             aria-label="テーマ一覧を閉じる"
             onClick={() => setIsDrawerOpen(false)}
-            // Warning: left-64 は aside の w-64 と一致させること。ずれるとバックドロップがドロワー本体に重なり、クリック領域が壊れる
+            // Warning: keep left-64 in sync with the aside's w-64; a mismatch overlaps the backdrop onto the drawer and breaks its click target
             className="absolute inset-y-0 right-0 left-64 z-20 bg-black/40 md:hidden"
           />
         )}

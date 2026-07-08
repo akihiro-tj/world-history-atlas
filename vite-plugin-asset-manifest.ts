@@ -24,9 +24,9 @@ function buildLocalAssetManifest(): LocalAssetManifest {
   };
 }
 
-// Warning: serve と build を 1 つのプラグインに統合しないこと。統合すると Vitest が
-// build ライフサイクルを誤って起動し closeBundle が走ってテストが不安定になるため、
-// apply: 'serve' / 'build' で明示的に分けている。
+// Warning: do not merge serve and build into a single plugin. Vitest would
+// spuriously trigger the build lifecycle and run closeBundle, making tests
+// flaky, so keep them split via apply: 'serve' / 'build'.
 export function assetManifestPlugin(): Plugin[] {
   let outDir = path.join(import.meta.dirname, 'dist');
 

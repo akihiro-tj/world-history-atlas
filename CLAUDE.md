@@ -61,6 +61,7 @@
 
 ## 規約
 
+- **main への直接コミット・push は禁止**。変更は必ずブランチを切って PR を作成し、CI（lint / typecheck / test / E2E）が green かつレビューを経てからマージする。main はブランチ保護で直接 push を禁止している
 - UI 文言・ドキュメントは日本語、コミットメッセージは英語（Conventional Commits）
-- コメントは Why / Warning のみ。動作説明・自明な JSDoc は書かない
+- コメントは Why / Warning のみ。動作説明・自明な JSDoc は書かない。コメントは英語で書く（UI 文言・ドキュメントは日本語だが、コード内コメントは英語）
 - `deploy` という npm script 名は使わない（pnpm 組み込みに握られる）
