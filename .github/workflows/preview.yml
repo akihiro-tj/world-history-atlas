@@ -9,6 +9,9 @@ permissions:
 
 jobs:
   preview:
+    # Dependabot PRs run without repository secrets, so the R2 upload cannot
+    # authenticate. Skip the preview deploy for them; CI still runs.
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
