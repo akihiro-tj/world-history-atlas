@@ -1,8 +1,10 @@
 # world-history-atlas
 
-世界史のテーマ（単元）ごとに、重要な都市と自然地形をインタラクティブな地図で探索できる学習用 Web アプリ「世界史マップ」。
+世界史のテーマごとに重要な都市と自然地形をインタラクティブな地図で探索できる Web アプリ。
 
 https://world-history-atlas.akihiro-tj.workers.dev
+
+![サービス画面](docs/screenshot.png)
 
 ## 開発
 
