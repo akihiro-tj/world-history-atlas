@@ -21,7 +21,7 @@
 - 頻出度（importance）によるフィルタ
 - ライト／ダークのカラーテーマ切替
 - レスポンシブ対応（デスクトップ / モバイル）
-- E2E テスト（Gherkin テスト仕様書ベース。英語キーワード + 日本語本文）、PR プレビュー環境、dependabot + minimumReleaseAge
+- E2E テスト（Gherkin テスト仕様書ベース。英語キーワード + 日本語本文）、PR プレビュー環境、dependabot + cooldown
 
 ### 含まない（フォローアップ）
 
@@ -249,7 +249,7 @@ Feature: テーマ別地図の探索
 
 - npm scripts: デプロイは `deploy:cf`（`deploy` という名前は pnpm 組み込みコマンドに握られるため使わない）。タイル生成は `tiles:build`
 - GitHub Secrets: `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`（登録は手動作業）
-- dependabot: npm と github-actions を週次で監視。pnpm の `minimumReleaseAge` を 7 日相当に設定し、公開直後のパッケージを取り込まない
+- dependabot: npm と github-actions を週次で監視。dependabot の `cooldown`（7 日）で公開直後のパッケージを更新 PR に取り込まない（pnpm の `minimumReleaseAge` は最新版ピン止めの新規プロジェクトで frozen install を壊すため使わない）
 - ドキュメントはすべて日本語: README(開発手順・タイル再生成手順) / CLAUDE.md（コマンド・アーキテクチャ・データ作成指針・Gherkin スタイルガイド）/ DESIGN.md（デザイントークン・Do/Don't）。コミットメッセージは英語（Conventional Commits）
 
 ## フォローアップ（MVP 外・優先度順未定）

@@ -87,7 +87,7 @@ world-history-atlas/
 | 18 | テーマデータ拡充（8〜12 テーマ） | |
 | 19 | Cloudflare デプロイ + Range request 実機検証 | ✅ wrangler 認証 |
 | 20 | CI ワークフロー | |
-| 21 | デプロイ/プレビュー WF + dependabot + minimumReleaseAge | ✅ Secrets 登録 |
+| 21 | デプロイ/プレビュー WF + dependabot + cooldown | ✅ Secrets 登録 |
 | 22 | README + 最終全体レビュー | ✅ デザインレビュー |
 
 ---
@@ -3487,7 +3487,7 @@ gh run watch   # 完了まで確認。失敗したらログを読んで修正（
 
 ---
 
-### Task 21: デプロイ/プレビュー WF + dependabot + minimumReleaseAge【要ユーザー対話: Secrets 登録】
+### Task 21: デプロイ/プレビュー WF + dependabot + cooldown【要ユーザー対話: Secrets 登録】
 
 **Files:**
 - Create: `.github/workflows/deploy.yml`, `.github/workflows/preview.yml`, `.github/dependabot.yml`, `pnpm-workspace.yaml`
