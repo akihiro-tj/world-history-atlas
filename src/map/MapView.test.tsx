@@ -5,9 +5,11 @@ import { BASEMAP_SOURCE_ID } from './mapStyle';
 
 type Handler = (...args: unknown[]) => void;
 type FakeMap = { handlers: Map<string, Handler> };
+type FakeProtocol = { tiles: Map<string, unknown> };
 
-const { fakeMapInstances } = vi.hoisted(() => ({
+const { fakeMapInstances, fakeProtocolInstances } = vi.hoisted(() => ({
   fakeMapInstances: [] as FakeMap[],
+  fakeProtocolInstances: [] as FakeProtocol[],
 }));
 
 vi.mock('maplibre-gl', () => {
@@ -31,7 +33,10 @@ vi.mock('maplibre-gl', () => {
 vi.mock('pmtiles', () => ({
   Protocol: class {
     tile = vi.fn();
-    tiles = new globalThis.Map();
+    tiles = new globalThis.Map<string, unknown>();
+    constructor() {
+      fakeProtocolInstances.push(this);
+    }
   },
 }));
 
@@ -86,5 +91,26 @@ describe('MapView', () => {
     const map = fakeMapInstances.at(-1);
     map?.handlers.get('error')?.({ error: { message: 'boom' } });
     expect(onError).not.toHaveBeenCalled();
+  });
+
+  it('basemap ソースのエラーで pmtiles のキャッシュを破棄する', () => {
+    render(
+      <MapView
+        colorTheme="light"
+        basemapPath="/tiles/basemap.pmtiles"
+        onError={vi.fn()}
+      />,
+    );
+    const protocol = fakeProtocolInstances.at(-1);
+    protocol?.tiles.set('pmtiles://example/tiles/basemap.pmtiles', {});
+    expect(protocol?.tiles.size).toBe(1);
+
+    const map = fakeMapInstances.at(-1);
+    map?.handlers.get('error')?.({
+      error: { message: 'network error' },
+      sourceId: BASEMAP_SOURCE_ID,
+    });
+
+    expect(protocol?.tiles.size).toBe(0);
   });
 });
