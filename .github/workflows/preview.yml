@@ -33,7 +33,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: versions upload
-      - uses: marocchino/sticky-pull-request-comment@v3
+      - uses: marocchino/sticky-pull-request-comment@v3.0.4
         with:
           message: |
             🔍 プレビュー環境: ${{ steps.upload.outputs.deployment-url }}
