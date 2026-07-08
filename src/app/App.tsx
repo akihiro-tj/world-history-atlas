@@ -325,7 +325,7 @@ export function App() {
               />
             </div>
           )}
-          {selection.status === 'none' && (
+          {indexState.status === 'loaded' && selection.status === 'none' && (
             <p
               data-testid="empty-state"
               className="absolute top-4 left-1/2 -translate-x-1/2 rounded bg-white/90 px-4 py-2 text-sm shadow dark:bg-slate-800/90"

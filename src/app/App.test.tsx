@@ -377,4 +377,16 @@ describe('App', () => {
 
     window.matchMedia = originalMatchMedia;
   });
+
+  it('テーマ一覧の取得に失敗した場合は空状態を表示しない', async () => {
+    vi.mocked(fetchThemeIndex).mockResolvedValueOnce({
+      ok: false,
+      error: { type: 'network' },
+    });
+    render(<App />);
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'データの取得に失敗しました',
+    );
+    expect(screen.queryByTestId('empty-state')).not.toBeInTheDocument();
+  });
 });
