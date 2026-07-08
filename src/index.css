@@ -4,6 +4,17 @@
   &:where([data-color-theme="dark"], [data-color-theme="dark"] *)
 );
 
+/* Warning: Tailwind v4 preflight sets the button cursor to default, so restore
+   the pointer cursor on interactive elements. */
+@layer base {
+  button:not(:disabled),
+  [role="button"],
+  a[href],
+  summary {
+    cursor: pointer;
+  }
+}
+
 :root {
   --color-marker-city: #d64545;
   --color-marker-halo: #ffffff;
