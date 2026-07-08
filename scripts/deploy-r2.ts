@@ -1,6 +1,6 @@
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import type { AssetManifest } from '../src/data/manifest';
 
@@ -133,6 +133,11 @@ async function main(): Promise<void> {
   );
   console.log('dist/asset-manifest.json:');
   console.log(JSON.stringify(manifest, null, 2));
+
+  // Vite が public/ から dist へ複製した原本は R2 で配信するため静的アセットには不要。
+  // 二重アップロードを避けるため R2 アップロード後に dist から除去する。
+  await rm(path.join(DIST_DIR, 'tiles'), { recursive: true, force: true });
+  await rm(path.join(DIST_DIR, 'data'), { recursive: true, force: true });
 }
 
 const isMainModule = import.meta.url === `file://${process.argv[1]}`;
