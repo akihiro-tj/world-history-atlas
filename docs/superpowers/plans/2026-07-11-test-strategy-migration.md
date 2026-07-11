@@ -90,6 +90,7 @@ describe('カラーテーマ', () => {
   });
 
   it('OS がダークなら初期表示が dark になる', async () => {
+    const restoreMatchMedia = window.matchMedia;
     vi.stubGlobal('matchMedia', (query: string) => ({
       matches: query === '(prefers-color-scheme: dark)',
       media: query,
@@ -104,12 +105,7 @@ describe('カラーテーマ', () => {
         'dark',
       );
     } finally {
-      vi.stubGlobal('matchMedia', (query: string) => ({
-        matches: false,
-        media: query,
-        addEventListener: () => {},
-        removeEventListener: () => {},
-      }));
+      vi.stubGlobal('matchMedia', restoreMatchMedia);
     }
   });
 });
