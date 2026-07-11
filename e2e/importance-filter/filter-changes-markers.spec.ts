@@ -19,7 +19,7 @@ test('頻出度フィルタで地図のマーカー表示が変わる', async ({
   await importanceFilter(page, 'すべて').click();
   await expect(cityMarker(page, 'ウルク')).toBeVisible();
 
-  // Regression: 解説パネルを開いたままでもフィルタを操作できる
+  // Regression: filter must stay operable while the detail panel is open
   await cityMarker(page, 'バビロン').click();
   await expect(detailPanel(page)).toContainText('バビロン');
   await importanceFilter(page, '★1のみ').click();
