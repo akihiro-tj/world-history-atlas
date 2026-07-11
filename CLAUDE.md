@@ -8,7 +8,7 @@
 | --- | --- |
 | `pnpm dev` | 開発サーバー |
 | `pnpm test` / `pnpm vitest run <path>` | 単体・コンポーネントテスト |
-| `pnpm e2e` / `pnpm e2e:smoke` | E2E（Gherkin + playwright-bdd。smoke は @smoke のみ） |
+| `pnpm e2e` / `pnpm e2e:smoke` | E2E（playwright-cli spec 駆動 / plain Playwright。smoke は @smoke のみ） |
 | `pnpm typecheck` / `pnpm lint` / `pnpm format` | tsc / Biome check / Biome format |
 | `pnpm validate-data` | テーマデータの検証 |
 | `pnpm tiles:build` | ベースマップ PMTiles の再生成（`nix develop -c pnpm tiles:build`） |
@@ -29,22 +29,12 @@
 - UI・地図の配色やタイポグラフィは DESIGN.md に従う
 - 地図の色は `src/map/mapColors.ts`、マーカーの色は `src/index.css` の CSS 変数、UI の色は Tailwind クラス。この境界を崩さない
 
-## E2E テスト仕様書（e2e/features/）
+## E2E テスト仕様書（e2e/specs/）
 
-- `.feature` が受け入れ基準の一次情報。機能の追加・変更は「.feature 更新 → 人間レビュー → ステップ実装」の順で進める
-- 記法: 英語キーワード（Feature / Scenario / Given / When / Then）+ 日本語本文
-- 未実装の機能の Feature には `@wip`、モバイル専用は `@mobile`、スモークは `@smoke` タグ
-- `「」` 内の引数を取るステップは正規表現で定義する（`{string}` は使わない）
-- ステップの言い回し（表記ゆれ禁止。既存ステップを再利用する）:
-  - **起動**: `アプリを開いている` / `クエリ「?…」でアプリを開いている` / `地図が表示されている`
-  - **テーマ**: `テーマ「◯◯」を選択する`（Given 形は `選択している`） / `サイドバーにテーマ「◯◯」が表示されている` / `URL のクエリが「◯◯」を含んでいる`
-  - **マーカー**: `都市マーカー「◯◯」が表示されている` / `都市マーカー「◯◯」が表示されていない` / `都市マーカー「◯◯」をクリックする` / `地形ラベル「◯◯」が表示されている` / `地形ラベル「◯◯」をクリックする`（地形ラベルの「表示されていない」は未定義）
-  - **パネル**: `解説パネルに「◯◯」と表示されている` / `解説パネルに「◯◯」を含む解説文が表示されている` / `解説パネルに頻出度「◯◯」が表示されている` / `解説パネルが表示されていない` / `解説パネルが画面の下半分に表示されている` / `解説パネルの閉じるボタンをクリックする`
-  - **フィルタ**: `頻出度フィルタを「◯◯」に切り替える`
-  - **カラーテーマ**: `カラーテーマトグルをクリックする` / `ページをリロードする` / `OS のカラースキームがダークである` / `ダークテーマが適用されている`
-  - **エラー処理**: `テーマデータの取得が失敗する状態である` / `データ取得を正常に戻す` / `再試行ボタンをクリックする` / `エラーメッセージ「◯◯」が表示されている` / `再試行ボタンが表示されている` / `テーマ選択を促すメッセージが表示されている`
-  - **モバイル**: `メニューボタンでドロワーを開く`
-  - アサーションは「〜されている」（状態）、操作は「〜する」（動作）で統一する
+- E2E は playwright-cli の spec 駆動（plan / generate / heal）。`e2e/specs/*.plan.md` が受け入れ基準の一次情報。機能の追加・変更は「spec 更新 → 人間レビュー → generate → green 確認 → heal」の順で進める
+- E2E に含めるのは jsdom で検証不可能なものだけ（実 MapLibre 描画・実ビューポートのレイアウト・実リロード）。それ以外は結合テスト（Vitest + Testing Library）に置く。同じ振る舞いを 2 層で検証しない
+- テストは 1 シナリオ 1 ファイル（`e2e/<group>/<name>.spec.ts`）。先頭に `// spec: e2e/specs/<name>.plan.md`。locator は `e2e/fixtures.ts` のヘルパーに寄せ、role / アクセシブルネーム / `data-*` を優先する
+- モバイルは `{ tag: '@mobile' }`（mobile プロジェクト）、スモークは `{ tag: '@smoke' }`、未実装は `test.fixme(...)`
 
 ## データ作成（public/data/themes/）
 

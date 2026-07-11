@@ -3,7 +3,7 @@
 世界史マップのテスト戦略。「AI がテストコードを書く」前提で、各テストレイヤの責務を再定義し、E2E を playwright-cli の spec 駆動ワークフロー（plan → generate → heal。Markdown spec + plain Playwright + 自己修復）へ移行する。
 
 - 作成日: 2026-07-11
-- ステータス: 設計合意済み（実装計画は別ドキュメント）
+- ステータス: 実装反映済み（実装計画: docs/superpowers/plans/2026-07-11-test-strategy-migration.md）
 
 ## 目的
 

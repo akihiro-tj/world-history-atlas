@@ -17,7 +17,7 @@ pnpm dev
 | --- | --- |
 | `pnpm dev` | 開発サーバー |
 | `pnpm test` | 単体・コンポーネントテスト（Vitest） |
-| `pnpm e2e` / `pnpm e2e:smoke` | E2E テスト（Playwright + playwright-bdd。smoke は `@smoke` のみ） |
+| `pnpm e2e` / `pnpm e2e:smoke` | E2E テスト（playwright-cli spec 駆動 / plain Playwright。smoke は `@smoke` のみ） |
 | `pnpm typecheck` / `pnpm lint` / `pnpm format` | tsc（アプリ + Worker）/ Biome check / Biome format |
 | `pnpm validate-data` | テーマデータの検証 |
 | `pnpm tiles:build` | ベースマップ PMTiles の再生成（`nix develop -c pnpm tiles:build`） |
@@ -70,5 +70,6 @@ R2 バケット `world-history-atlas-tiles` を事前に作成しておく
 
 ## テスト仕様書
 
-E2E の受け入れシナリオは `e2e/features/*.feature`（Gherkin: 英語キーワード + 日本語本文）が
-一次情報。機能の追加・変更は `.feature` の更新とレビューから始める。
+E2E の受け入れシナリオは `e2e/specs/*.plan.md`（playwright-cli の spec 駆動）が一次情報。
+機能の追加・変更は spec の更新とレビューから始め、generate でテストを生成する。
+詳細は CLAUDE.md の「E2E テスト仕様書」を参照。
