@@ -390,3 +390,41 @@ describe('App', () => {
     expect(screen.queryByTestId('empty-state')).not.toBeInTheDocument();
   });
 });
+
+describe('カラーテーマ', () => {
+  afterEach(() => {
+    document.documentElement.removeAttribute('data-color-theme');
+  });
+
+  it('トグルで data-color-theme が dark になる', async () => {
+    render(<App />);
+    await screen.findByRole('button', { name: /古代オリエント/ });
+    await userEvent.click(
+      screen.getByRole('button', { name: 'カラーテーマを切り替える' }),
+    );
+    expect(document.documentElement).toHaveAttribute(
+      'data-color-theme',
+      'dark',
+    );
+  });
+
+  it('OS がダークなら初期表示が dark になる', async () => {
+    const restoreMatchMedia = window.matchMedia;
+    vi.stubGlobal('matchMedia', (query: string) => ({
+      matches: query === '(prefers-color-scheme: dark)',
+      media: query,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    }));
+    try {
+      render(<App />);
+      await screen.findByRole('button', { name: /古代オリエント/ });
+      expect(document.documentElement).toHaveAttribute(
+        'data-color-theme',
+        'dark',
+      );
+    } finally {
+      vi.stubGlobal('matchMedia', restoreMatchMedia);
+    }
+  });
+});
