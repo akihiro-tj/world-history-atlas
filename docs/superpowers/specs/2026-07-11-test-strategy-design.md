@@ -98,8 +98,8 @@
 
 | 現行 E2E | 追加するコンポーネントテスト |
 | --- | --- |
-| トグルでダークテーマに切り替わる | トグル操作 → `data-theme`（DOM）反映を検証 |
-| OS がダークモードなら初期表示はダーク | matchMedia モック → 初期 `data-theme` を検証 |
+| トグルでダークテーマに切り替わる | トグル操作 → `data-color-theme`（DOM）反映を検証 |
+| OS がダークモードなら初期表示はダーク | matchMedia モック → 初期 `data-color-theme` を検証 |
 
 ## E2E 基盤（playwright-cli spec 駆動の構成）
 
