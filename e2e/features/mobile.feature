@@ -1,5 +1,7 @@
 @mobile
 Feature: モバイル表示
+  # 軸: ビューポート = モバイル × 操作 = ドロワーからの選択 / 解説の表示
+  # E2E で扱わない: ドロワー開閉状態・inert・ドロワーと解説パネルの連動 → component（App.test.tsx）
 
   Scenario: ドロワーからテーマを選択できる
     Given アプリを開いている

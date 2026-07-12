@@ -30,14 +30,3 @@ Then(
     await expect(page.getByTestId('detail-panel')).toContainText(stars);
   },
 );
-
-When('解説パネルの閉じるボタンをクリックする', async ({ page }) => {
-  await page
-    .getByTestId('detail-panel')
-    .getByRole('button', { name: '閉じる' })
-    .click();
-});
-
-Then('解説パネルが表示されていない', async ({ page }) => {
-  await expect(page.getByTestId('detail-panel')).toHaveCount(0);
-});

@@ -205,21 +205,6 @@ describe('App', () => {
     );
   });
 
-  it('テーマ一覧の取得失敗でエラービューが出て、再試行で回復する', async () => {
-    vi.mocked(fetchThemeIndex).mockResolvedValueOnce({
-      ok: false,
-      error: { type: 'network' },
-    });
-    render(<App />);
-    expect(await screen.findByRole('alert')).toHaveTextContent(
-      'データの取得に失敗しました',
-    );
-    await userEvent.click(screen.getByRole('button', { name: '再試行' }));
-    expect(
-      await screen.findByRole('button', { name: /古代オリエント/ }),
-    ).toBeInTheDocument();
-  });
-
   it('マニフェストの取得失敗でエラービューが出て、再試行で回復する', async () => {
     vi.mocked(fetchAssetManifest).mockResolvedValueOnce({
       ok: false,

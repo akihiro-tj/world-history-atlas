@@ -24,7 +24,3 @@ Then(
 Then('再試行ボタンが表示されている', async ({ page }) => {
   await expect(page.getByRole('button', { name: '再試行' })).toBeVisible();
 });
-
-Then('テーマ選択を促すメッセージが表示されている', async ({ page }) => {
-  await expect(page.getByTestId('empty-state')).toBeVisible();
-});

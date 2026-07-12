@@ -40,11 +40,3 @@ Then(
     ).toBeVisible();
   },
 );
-
-Then(
-  /^URL のクエリが「(.+)」を含んでいる$/,
-  async ({ page }, fragment: string) => {
-    const escaped = fragment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    await expect(page).toHaveURL(new RegExp(escaped));
-  },
-);
