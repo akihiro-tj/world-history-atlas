@@ -130,6 +130,14 @@ vi.mock('../theme/fetch', () => ({
                 importance: 1,
                 description: '解説。',
               },
+              {
+                id: 'ur',
+                kind: 'city',
+                name: 'ウル',
+                coordinates: [46.103, 30.963],
+                importance: 2,
+                description: '解説。',
+              },
             ],
           },
         }
@@ -388,5 +396,103 @@ describe('App', () => {
       'データの取得に失敗しました',
     );
     expect(screen.queryByTestId('empty-state')).not.toBeInTheDocument();
+  });
+});
+
+describe('カラーテーマ', () => {
+  afterEach(() => {
+    document.documentElement.removeAttribute('data-color-theme');
+  });
+
+  it('トグルで data-color-theme が dark になる', async () => {
+    render(<App />);
+    await screen.findByRole('button', { name: /古代オリエント/ });
+    await userEvent.click(
+      screen.getByRole('button', { name: 'カラーテーマを切り替える' }),
+    );
+    expect(document.documentElement).toHaveAttribute(
+      'data-color-theme',
+      'dark',
+    );
+  });
+
+  it('OS がダークなら初期表示が dark になる', async () => {
+    const restoreMatchMedia = window.matchMedia;
+    vi.stubGlobal('matchMedia', (query: string) => ({
+      matches: query === '(prefers-color-scheme: dark)',
+      media: query,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    }));
+    try {
+      render(<App />);
+      await screen.findByRole('button', { name: /古代オリエント/ });
+      expect(document.documentElement).toHaveAttribute(
+        'data-color-theme',
+        'dark',
+      );
+    } finally {
+      vi.stubGlobal('matchMedia', restoreMatchMedia);
+    }
+  });
+});
+
+describe('選択とフィルタ・テーマ切替の組み合わせ', () => {
+  async function renderAndSelectOrient() {
+    render(<App />);
+    await userEvent.click(
+      await screen.findByRole('button', { name: /古代オリエント/ }),
+    );
+  }
+
+  it('選択中の★2都市が★1のみフィルタで消えると解説パネルも閉じる', async () => {
+    await renderAndSelectOrient();
+    await userEvent.click(await screen.findByTestId('marker-ur'));
+    expect(await screen.findByTestId('detail-panel')).toHaveTextContent('ウル');
+
+    await userEvent.click(screen.getByRole('button', { name: '★1のみ' }));
+
+    expect(screen.queryByTestId('detail-panel')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('marker-ur')).not.toBeInTheDocument();
+  });
+
+  it('選択中の★1都市は★1のみフィルタでも解説パネルが残る', async () => {
+    await renderAndSelectOrient();
+    await userEvent.click(await screen.findByTestId('marker-babylon'));
+    expect(await screen.findByTestId('detail-panel')).toHaveTextContent(
+      'バビロン',
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: '★1のみ' }));
+
+    expect(screen.getByTestId('detail-panel')).toHaveTextContent('バビロン');
+  });
+
+  it('テーマを切り替えると解説パネルが閉じる', async () => {
+    await renderAndSelectOrient();
+    await userEvent.click(await screen.findByTestId('marker-babylon'));
+    expect(await screen.findByTestId('detail-panel')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: /壊れたテーマ/ }));
+
+    expect(screen.queryByTestId('detail-panel')).not.toBeInTheDocument();
+  });
+
+  it('テーマを切り替えてもフィルタ設定は維持される', async () => {
+    await renderAndSelectOrient();
+    await userEvent.click(screen.getByRole('button', { name: '★1のみ' }));
+    expect(screen.queryByTestId('marker-ur')).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: /壊れたテーマ/ }));
+    await userEvent.click(
+      screen.getByRole('button', { name: /古代オリエント/ }),
+    );
+
+    expect(await screen.findByTestId('marker-babylon')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '★1のみ' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    expect(screen.queryByTestId('marker-ur')).not.toBeInTheDocument();
   });
 });
