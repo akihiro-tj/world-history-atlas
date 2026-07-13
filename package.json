@@ -17,6 +17,7 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "validate-data": "tsx scripts/validate-data.ts",
+    "check-specs": "tsx scripts/check-specs.ts",
     "tiles:build": "scripts/build-tiles.sh",
     "deploy:cf": "pnpm build && tsx scripts/deploy-r2.ts && wrangler deploy",
     "e2e": "playwright test",

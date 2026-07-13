@@ -19,6 +19,7 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm validate-data
+      - run: pnpm check-specs
       - run: scripts/check-tiles.sh
       - run: pnpm test
       - run: pnpm build
