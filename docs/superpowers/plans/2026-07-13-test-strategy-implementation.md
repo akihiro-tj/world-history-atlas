@@ -609,8 +609,12 @@ git commit -m "docs(specs): add guideline for executable perspective tables"
 ## 軸
 | 軸 | 値 |
 | --- | --- |
-| 失敗対象 | マニフェスト / テーマ一覧 / テーマ本体 / 地図タイル |
-| 段階 | 表示 / 回復 |
+| 失敗対象 | マニフェスト |
+| 失敗対象 | テーマ一覧 |
+| 失敗対象 | テーマ本体 |
+| 失敗対象 | 地図タイル |
+| 段階 | 表示 |
+| 段階 | 回復 |
 
 ## 失敗対象 × 段階
 | # | 観点 | 状態 | 操作 | 期待 | 層 | 備考 |
@@ -726,7 +730,7 @@ git rm e2e/steps/app.steps.ts e2e/steps/theme.steps.ts e2e/steps/marker.steps.ts
 ```
 
 - [ ] **Step 4: 検証** — Run: `pnpm exec playwright test --list && pnpm typecheck && pnpm lint`
-Expected: `--list` で 8 テスト（app-boot 1 / theme-selection 3 / feature-detail 2 / importance-filter 3 / color-theme 1 の e2e 行 + mobile 2）が列挙され、未定義フレーズのエラーが出ない。実ブラウザ実行は Task 7。
+Expected: `--list` で 12 テスト（app-boot 1 / theme-selection 3 / feature-detail 2 / importance-filter 3 / color-theme 1 の e2e 行 + mobile 2）が列挙され、未定義フレーズのエラーが出ない。実ブラウザ実行は Task 7。
 
 - [ ] **Step 5: コミット**
 
@@ -970,7 +974,7 @@ CLAUDE.md の「テスト仕様書」を参照。
 
 Run（サンドボックス内）: `pnpm typecheck && pnpm lint && pnpm vitest run && pnpm exec playwright test --list && pnpm check-specs`
 Run（サンドボックス無効・実ブラウザ）: `pnpm e2e`
-Expected: すべて green。E2E 8 実行（desktop 6 + mobile 2）、component は c 行 20 前後、unit は既存 + spec-runner
+Expected: すべて green。E2E 12 実行（desktop 10 + mobile 2）、component は c 行 23、unit は既存 + spec-runner
 
 - [ ] **Step 4: コミットと PR（ユーザー承認後）**
 
