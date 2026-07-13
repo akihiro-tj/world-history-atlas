@@ -39,14 +39,16 @@ const manifestFixture = {
   },
 };
 
+// Warning: intentionally out of `order` so the sidebar-order c row exercises
+// the sort. Keeping it pre-sorted makes that row pass without sorting.
 const themeIndexFixture = [
+  { id: 'broken-theme', title: '壊れたテーマ', era: 'era', order: 2 },
   {
     id: 'ancient-orient',
     title: '古代オリエント',
     era: '前3000年頃〜前330年',
     order: 1,
   },
-  { id: 'broken-theme', title: '壊れたテーマ', era: 'era', order: 2 },
 ];
 
 const ancientOrientTheme = {
