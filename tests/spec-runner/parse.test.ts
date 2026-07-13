@@ -26,6 +26,17 @@ const sample = `# サンプル
 
 const feature = parseSpec(sample, 'sample.md');
 
+const matrixTable = feature.tables[0];
+const stepTable = feature.tables[1];
+if (!matrixTable || !stepTable) {
+  throw new Error('サンプル仕様の表がパースできていない');
+}
+const matrixRow = matrixTable.rows[1];
+const stepRow = stepTable.rows[0];
+if (!matrixRow || !stepRow) {
+  throw new Error('サンプル仕様の行がパースできていない');
+}
+
 describe('parseSpec', () => {
   it('軸表を辞書として読む', () => {
     expect(feature.axes.get('選択中のフィーチャー')).toEqual([
@@ -35,37 +46,33 @@ describe('parseSpec', () => {
   });
 
   it('状態（軸）・操作（軸）列を持つ表を matrix と判定する', () => {
-    const table = feature.tables[0];
-    expect(table.mode).toBe('matrix');
-    expect(table.axisColumns).toEqual([
+    expect(matrixTable.mode).toBe('matrix');
+    expect(matrixTable.axisColumns).toEqual([
       { name: '選択中のフィーチャー', header: '状態（選択中のフィーチャー）' },
       { name: 'フィルタ', header: '操作（フィルタ）' },
     ]);
-    expect(table.premise).toEqual(['アプリを開いている']);
+    expect(matrixTable.premise).toEqual(['アプリを開いている']);
   });
 
   it('matrix 行の軸値・期待・前置きを読む', () => {
-    const row = feature.tables[0].rows[1];
-    expect(row.axisValues.get('選択中のフィーチャー')).toBe('★2都市');
-    expect(row.axisValues.get('フィルタ')).toBe('★1のみ');
-    expect(row.expects).toEqual(['解説パネルが表示されていない']);
-    expect(row.precondition).toEqual([
+    expect(matrixRow.axisValues.get('選択中のフィーチャー')).toBe('★2都市');
+    expect(matrixRow.axisValues.get('フィルタ')).toBe('★1のみ');
+    expect(matrixRow.expects).toEqual(['解説パネルが表示されていない']);
+    expect(matrixRow.precondition).toEqual([
       '頻出度フィルタを「すべて」に切り替える',
     ]);
-    expect(row.note).toBe('');
+    expect(matrixRow.note).toBe('');
   });
 
   it('状態・操作列を持つ表を step と判定する', () => {
-    const table = feature.tables[1];
-    expect(table.mode).toBe('step');
-    expect(table.rows[0].label).toBe('切替');
-    expect(table.rows[0].states).toEqual(['テーマ「A」を選択している']);
-    expect(table.rows[0].operations).toEqual(['テーマ「B」を選択する']);
+    expect(stepTable.mode).toBe('step');
+    expect(stepRow.label).toBe('切替');
+    expect(stepRow.states).toEqual(['テーマ「A」を選択している']);
+    expect(stepRow.operations).toEqual(['テーマ「B」を選択する']);
   });
 
   it('matrix 行を 前提 → 前置き → 状態軸 → 操作軸 → 期待 に解決する', () => {
-    const table = feature.tables[0];
-    expect(rowPhrases(feature, table, table.rows[1])).toEqual([
+    expect(rowPhrases(feature, matrixTable, matrixRow)).toEqual([
       'アプリを開いている',
       '頻出度フィルタを「すべて」に切り替える',
       '都市マーカー「ウル」を選択している',
@@ -75,8 +82,7 @@ describe('parseSpec', () => {
   });
 
   it('step 行を 前提 → 状態 → 操作 → 期待 に解決する', () => {
-    const table = feature.tables[1];
-    expect(rowPhrases(feature, table, table.rows[0])).toEqual([
+    expect(rowPhrases(feature, stepTable, stepRow)).toEqual([
       'テーマ「A」を選択している',
       'テーマ「B」を選択する',
       '都市マーカー「アテネ」が表示されている',
@@ -84,9 +90,7 @@ describe('parseSpec', () => {
   });
 
   it('rowLabel は matrix では軸値の連結、step では観点', () => {
-    expect(rowLabel(feature.tables[0], feature.tables[0].rows[1])).toBe(
-      '★2都市 × ★1のみ',
-    );
-    expect(rowLabel(feature.tables[1], feature.tables[1].rows[0])).toBe('切替');
+    expect(rowLabel(matrixTable, matrixRow)).toBe('★2都市 × ★1のみ');
+    expect(rowLabel(stepTable, stepRow)).toBe('切替');
   });
 });

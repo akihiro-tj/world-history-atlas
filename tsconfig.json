@@ -15,6 +15,7 @@
     "src",
     "scripts",
     "e2e",
+    "tests",
     "vite.config.ts",
     "playwright.config.ts",
     "vite-plugin-asset-manifest.ts"

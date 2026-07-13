@@ -59,28 +59,29 @@ function collectRawTables(markdown: string): {
   let heading = '';
   let premise: string[] = [];
   for (let i = 0; i < lines.length; i++) {
-    const h1 = lines[i].match(/^#\s+(.+)$/);
+    const line = lines[i] ?? '';
+    const h1 = line.match(/^#\s+(.+)$/);
     if (h1) {
-      name = h1[1].trim();
+      name = (h1[1] ?? '').trim();
       continue;
     }
-    const h2 = lines[i].match(/^#{2,}\s+(.+)$/);
+    const h2 = line.match(/^#{2,}\s+(.+)$/);
     if (h2) {
-      heading = h2[1].trim();
+      heading = (h2[1] ?? '').trim();
       premise = [];
       continue;
     }
-    const premiseMatch = lines[i].match(/^前提:\s*(.+)$/);
+    const premiseMatch = line.match(/^前提:\s*(.+)$/);
     if (premiseMatch) {
-      premise = splitPhrases(premiseMatch[1]);
+      premise = splitPhrases(premiseMatch[1] ?? '');
       continue;
     }
-    if (/^\|/.test(lines[i]) && /^\|[\s:|-]+\|?\s*$/.test(lines[i + 1] ?? '')) {
-      const header = splitCells(lines[i]);
+    if (/^\|/.test(line) && /^\|[\s:|-]+\|?\s*$/.test(lines[i + 1] ?? '')) {
+      const header = splitCells(line);
       const rows: string[][] = [];
       let j = i + 2;
-      while (j < lines.length && /^\|/.test(lines[j])) {
-        rows.push(splitCells(lines[j]));
+      while (j < lines.length && /^\|/.test(lines[j] ?? '')) {
+        rows.push(splitCells(lines[j] ?? ''));
         j++;
       }
       raws.push({ heading, premise, header, rows });
@@ -99,10 +100,10 @@ export function parseSpec(markdown: string, file: string): SpecFeature {
     const valueIdx = raw.header.indexOf('値');
     const phraseIdx = raw.header.indexOf('フレーズ');
     for (const row of raw.rows) {
-      const axis = row[axisIdx];
+      const axis = row[axisIdx] ?? '';
       if (!axes.has(axis)) axes.set(axis, []);
       axes.get(axis)?.push({
-        value: row[valueIdx],
+        value: row[valueIdx] ?? '',
         phrases: phraseIdx >= 0 ? splitPhrases(row[phraseIdx] ?? '') : [],
       });
     }
@@ -117,8 +118,9 @@ export function parseSpec(markdown: string, file: string): SpecFeature {
     const axisColumns: { name: string; header: string }[] = [];
     for (const header of raw.header) {
       const matched = header.match(AXIS_HEADER);
-      if (matched && axes.has(matched[1])) {
-        axisColumns.push({ name: matched[1], header });
+      const axisName = matched?.[1];
+      if (axisName && axes.has(axisName)) {
+        axisColumns.push({ name: axisName, header });
       }
     }
     const mode: 'matrix' | 'step' = axisColumns.length > 0 ? 'matrix' : 'step';
@@ -141,7 +143,7 @@ export function parseSpec(markdown: string, file: string): SpecFeature {
         expects: splitPhrases(cells[col('期待')] ?? ''),
         layer: cells[col('層')] ?? '',
         note: preMatch ? '' : rawNote,
-        precondition: preMatch ? splitPhrases(preMatch[1]) : [],
+        precondition: preMatch ? splitPhrases(preMatch[1] ?? '') : [],
       };
     });
 
