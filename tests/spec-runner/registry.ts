@@ -9,6 +9,9 @@ export function createRegistry<Ctx>() {
     phrase(pattern: RegExp, handler: PhraseHandler<Ctx>) {
       entries.push({ pattern, handler });
     },
+    resolves(text: string): boolean {
+      return entries.some((entry) => entry.pattern.test(text));
+    },
     async run(ctx: Ctx, text: string) {
       for (const entry of entries) {
         const matched = text.match(entry.pattern);

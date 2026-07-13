@@ -1,11 +1,15 @@
 import { test } from '@playwright/test';
 import { loadSpecs } from '../tests/spec-runner/load';
 import { rowLabel, rowPhrases } from '../tests/spec-runner/parse';
+import { assertPhrasesResolve } from '../tests/spec-runner/validate';
 import { registry } from './steps/index';
 
 const E2E = /^e2e(?:\((smoke|mobile)\))?$/;
+const features = loadSpecs();
 
-for (const feature of loadSpecs()) {
+assertPhrasesResolve(features, registry, (layer) => E2E.test(layer));
+
+for (const feature of features) {
   for (const table of feature.tables) {
     for (const row of table.rows) {
       const matched = row.layer.match(E2E);
