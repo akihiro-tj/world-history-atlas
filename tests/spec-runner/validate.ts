@@ -14,10 +14,10 @@ export function assertPhrasesResolve(
     for (const table of feature.tables) {
       for (const row of table.rows) {
         if (!includesLayer(row.layer)) continue;
-        for (const phrase of rowPhrases(feature, table, row)) {
+        for (const phrase of rowPhrases(table, row)) {
           if (!registry.resolves(phrase)) {
             unresolved.push(
-              `${feature.file}「${table.heading}」#${row.id}: ${phrase}`,
+              `${feature.file}「${table.heading}」${row.label}: ${phrase}`,
             );
           }
         }

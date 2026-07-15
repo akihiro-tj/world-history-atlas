@@ -1,31 +1,20 @@
-export type AxisValue = { value: string; phrases: string[] };
 export type SpecRow = {
-  id: string;
   label: string;
-  axisValues: Map<string, string>;
   states: string[];
   operations: string[];
   expects: string[];
   layer: string;
-  note: string;
-  precondition: string[];
 };
 export type SpecTable = {
   heading: string;
-  mode: 'matrix' | 'step';
-  axisColumns: { name: string; header: string }[];
   premise: string[];
   rows: SpecRow[];
 };
 export type SpecFeature = {
   name: string;
   file: string;
-  axes: Map<string, AxisValue[]>;
   tables: SpecTable[];
 };
-
-// Warning: full-width parens（）— must match the header convention in specs
-const AXIS_HEADER = /^(?:状態|操作)（(.+)）$/;
 
 function splitCells(line: string): string[] {
   return line
@@ -94,95 +83,30 @@ function collectRawTables(markdown: string): {
 export function parseSpec(markdown: string, file: string): SpecFeature {
   const { name, raws } = collectRawTables(markdown);
 
-  const axes = new Map<string, AxisValue[]>();
-  for (const raw of raws.filter((raw) => raw.heading === '軸')) {
-    const axisIdx = raw.header.indexOf('軸');
-    const valueIdx = raw.header.indexOf('値');
-    const phraseIdx = raw.header.indexOf('フレーズ');
-    for (const row of raw.rows) {
-      const axis = row[axisIdx] ?? '';
-      if (!axes.has(axis)) axes.set(axis, []);
-      axes.get(axis)?.push({
-        value: row[valueIdx] ?? '',
-        phrases: phraseIdx >= 0 ? splitPhrases(row[phraseIdx] ?? '') : [],
-      });
-    }
-  }
-
   const tables: SpecTable[] = [];
   for (const raw of raws) {
-    if (raw.heading === '軸') continue;
     const col = (header: string) => raw.header.indexOf(header);
     if (col('期待') < 0 || col('層') < 0) continue;
 
-    const axisColumns: { name: string; header: string }[] = [];
-    for (const header of raw.header) {
-      const matched = header.match(AXIS_HEADER);
-      const axisName = matched?.[1];
-      if (axisName && axes.has(axisName)) {
-        axisColumns.push({ name: axisName, header });
-      }
-    }
-    const mode: 'matrix' | 'step' = axisColumns.length > 0 ? 'matrix' : 'step';
+    const rows: SpecRow[] = raw.rows.map((cells) => ({
+      label: col('観点') >= 0 ? (cells[col('観点')] ?? '') : '',
+      states: col('状態') >= 0 ? splitPhrases(cells[col('状態')] ?? '') : [],
+      operations:
+        col('操作') >= 0 ? splitPhrases(cells[col('操作')] ?? '') : [],
+      expects: splitPhrases(cells[col('期待')] ?? ''),
+      layer: cells[col('層')] ?? '',
+    }));
 
-    const rows: SpecRow[] = raw.rows.map((cells) => {
-      const rawNote = cells[col('備考')] ?? '';
-      const preMatch = rawNote.match(/^前置き:\s*(.+)$/);
-      return {
-        id: cells[col('#')] ?? '',
-        label: col('観点') >= 0 ? (cells[col('観点')] ?? '') : '',
-        axisValues: new Map(
-          axisColumns.map(({ name, header }) => [
-            name,
-            cells[col(header)] ?? '',
-          ]),
-        ),
-        states: col('状態') >= 0 ? splitPhrases(cells[col('状態')] ?? '') : [],
-        operations:
-          col('操作') >= 0 ? splitPhrases(cells[col('操作')] ?? '') : [],
-        expects: splitPhrases(cells[col('期待')] ?? ''),
-        layer: cells[col('層')] ?? '',
-        note: preMatch ? '' : rawNote,
-        precondition: preMatch ? splitPhrases(preMatch[1] ?? '') : [],
-      };
-    });
-
-    tables.push({
-      heading: raw.heading,
-      mode,
-      axisColumns,
-      premise: raw.premise,
-      rows,
-    });
+    tables.push({ heading: raw.heading, premise: raw.premise, rows });
   }
 
-  return { name: name || file, file, axes, tables };
+  return { name: name || file, file, tables };
 }
 
-export function rowPhrases(
-  feature: SpecFeature,
-  table: SpecTable,
-  row: SpecRow,
-): string[] {
-  const phrases = [...table.premise, ...row.precondition];
-  if (table.mode === 'matrix') {
-    for (const { name } of table.axisColumns) {
-      const value = row.axisValues.get(name) ?? '';
-      const entry = feature.axes.get(name)?.find((v) => v.value === value);
-      phrases.push(...(entry?.phrases ?? []));
-    }
-  } else {
-    phrases.push(...row.states, ...row.operations);
-  }
-  phrases.push(...row.expects);
-  return phrases;
+export function rowPhrases(table: SpecTable, row: SpecRow): string[] {
+  return [...table.premise, ...row.states, ...row.operations, ...row.expects];
 }
 
-export function rowLabel(table: SpecTable, row: SpecRow): string {
-  if (table.mode === 'matrix') {
-    return table.axisColumns
-      .map(({ name }) => row.axisValues.get(name) ?? '')
-      .join(' × ');
-  }
+export function rowLabel(row: SpecRow): string {
   return row.label;
 }

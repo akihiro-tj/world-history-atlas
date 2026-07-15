@@ -15,9 +15,9 @@ for (const feature of features) {
       const matched = row.layer.match(E2E);
       if (!matched) continue;
       const tag = matched[1] ? [`@${matched[1]}`] : [];
-      const title = `${feature.name} ${table.heading} #${row.id} ${rowLabel(table, row)}`;
+      const title = `${feature.name} ${table.heading} ${rowLabel(row)}`;
       test(title, { tag }, async ({ page }) => {
-        for (const phrase of rowPhrases(feature, table, row)) {
+        for (const phrase of rowPhrases(table, row)) {
           await registry.run({ page }, phrase);
         }
       });

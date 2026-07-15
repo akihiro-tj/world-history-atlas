@@ -2,15 +2,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { loadSpecs } from '../tests/spec-runner/load';
 
-const LAYER = /^(e2e(?:\((?:smoke|mobile)\))?|c|unit|直接|=\d+|対象外)$/;
+const LAYER = /^(e2e(?:\((?:smoke|mobile)\))?|結合)$/;
 const errors: string[] = [];
-
-function product(valueLists: string[][]): string[][] {
-  return valueLists.reduce<string[][]>(
-    (acc, values) => acc.flatMap((combo) => values.map((v) => [...combo, v])),
-    [[]],
-  );
-}
 
 // Warning: a table whose header omits 期待/層 is silently dropped by the parser.
 // Flag any heading that has a table in the source but produced no parsed table.
@@ -27,21 +20,34 @@ function headingsWithTables(markdown: string): string[] {
     }
     const isTableHeader =
       /^\|/.test(line) && /^\|[\s:|-]+\|?\s*$/.test(lines[i + 1] ?? '');
-    if (
-      isTableHeader &&
-      heading &&
-      heading !== '軸' &&
-      !headings.includes(heading)
-    ) {
+    if (isTableHeader && heading && !headings.includes(heading)) {
       headings.push(heading);
     }
   }
   return headings;
 }
 
+// Pointer paths declared as `path` in the prose "## 別層で検証" section.
+function pointerPaths(markdown: string): string[] {
+  const lines = markdown.split('\n');
+  const paths: string[] = [];
+  let inSection = false;
+  for (const line of lines) {
+    const heading = line.match(/^#{2,}\s+(.+)$/);
+    if (heading) {
+      inSection = (heading[1] ?? '').trim() === '別層で検証';
+      continue;
+    }
+    if (!inSection) continue;
+    const matched = line.match(/`([^`]+)`/);
+    if (matched?.[1]) paths.push(matched[1]);
+  }
+  return paths;
+}
+
 for (const feature of loadSpecs()) {
-  const parsedHeadings = new Set(feature.tables.map((table) => table.heading));
   const source = readFileSync(join('specs', feature.file), 'utf8');
+  const parsedHeadings = new Set(feature.tables.map((table) => table.heading));
   for (const heading of headingsWithTables(source)) {
     if (!parsedHeadings.has(heading)) {
       errors.push(
@@ -51,63 +57,21 @@ for (const feature of loadSpecs()) {
   }
 
   for (const table of feature.tables) {
-    const at = (id: string) => `${feature.file}「${table.heading}」#${id}`;
-
     for (const row of table.rows) {
+      const at = `${feature.file}「${table.heading}」${row.label}`;
       if (!LAYER.test(row.layer)) {
-        errors.push(`${at(row.id)}: 層「${row.layer}」が不正`);
+        errors.push(`${at}: 層「${row.layer}」が不正`);
         continue;
       }
-      if (/^(e2e|c)/.test(row.layer) && row.expects.length === 0) {
-        errors.push(`${at(row.id)}: 実行行に期待がない`);
-      }
-      const equivalent = row.layer.match(/^=(\d+)$/);
-      if (
-        equivalent &&
-        !table.rows.some((other) => other.id === equivalent[1])
-      ) {
-        errors.push(`${at(row.id)}: =${equivalent[1]} の参照先がない`);
-      }
-      if (
-        (row.layer === 'unit' || row.layer === '直接') &&
-        !existsSync(row.note)
-      ) {
-        errors.push(`${at(row.id)}: 備考のパスが存在しない「${row.note}」`);
-      }
-      if ((equivalent || row.layer === '対象外') && row.note.trim() === '') {
-        errors.push(`${at(row.id)}: 理由（備考）がない`);
-      }
-      if (table.mode === 'matrix') {
-        for (const { name } of table.axisColumns) {
-          const value = row.axisValues.get(name) ?? '';
-          if (!feature.axes.get(name)?.some((v) => v.value === value)) {
-            errors.push(
-              `${at(row.id)}: ${name}「${value}」が軸に宣言されていない`,
-            );
-          }
-        }
+      if (row.expects.length === 0) {
+        errors.push(`${at}: 実行行に期待がない`);
       }
     }
+  }
 
-    const cross = table.heading.split('×').map((part) => part.trim());
-    if (cross.length >= 2 && cross.every((axis) => feature.axes.has(axis))) {
-      const covered = new Set(
-        table.mode === 'matrix'
-          ? table.rows.map((row) =>
-              cross.map((axis) => row.axisValues.get(axis)).join(' × '),
-            )
-          : table.rows.map((row) => row.label),
-      );
-      for (const combo of product(
-        cross.map((axis) => feature.axes.get(axis)?.map((v) => v.value) ?? []),
-      )) {
-        const key = combo.join(' × ');
-        if (!covered.has(key)) {
-          errors.push(
-            `${feature.file}「${table.heading}」に ${key} の行がない`,
-          );
-        }
-      }
+  for (const path of pointerPaths(source)) {
+    if (!existsSync(path)) {
+      errors.push(`${feature.file}「別層で検証」: パスが存在しない「${path}」`);
     }
   }
 }
