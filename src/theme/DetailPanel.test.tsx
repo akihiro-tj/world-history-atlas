@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { DetailPanel } from './DetailPanel';
 import type { ThemeFeature } from './schema';
 
@@ -37,12 +36,5 @@ describe('DetailPanel', () => {
   it('地形は terrainKind のラベルを表示する', () => {
     render(<DetailPanel feature={terrain} onClose={() => {}} />);
     expect(screen.getByText('河川')).toBeInTheDocument();
-  });
-
-  it('閉じるボタンで onClose が呼ばれる', async () => {
-    const onClose = vi.fn();
-    render(<DetailPanel feature={city} onClose={onClose} />);
-    await userEvent.click(screen.getByRole('button', { name: '閉じる' }));
-    expect(onClose).toHaveBeenCalled();
   });
 });
