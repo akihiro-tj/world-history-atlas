@@ -1,8 +1,8 @@
 import { test } from '@playwright/test';
-import { loadSpecs } from '../tests/spec-runner/load';
-import { rowLabel, rowPhrases } from '../tests/spec-runner/parse';
-import { assertPhrasesResolve } from '../tests/spec-runner/validate';
-import { registry } from './steps/index';
+import { loadSpecs } from '../spec-runner/load';
+import { rowLabel, rowPhrases } from '../spec-runner/parse';
+import { assertPhrasesResolve } from '../spec-runner/validate';
+import { registry } from './steps';
 
 const E2E = /^e2e(?:\((smoke|mobile)\))?$/;
 const features = loadSpecs();

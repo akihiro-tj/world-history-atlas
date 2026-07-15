@@ -1,8 +1,8 @@
 import { describe, test } from 'vitest';
-import { registry } from './component-steps/phrases';
-import { loadSpecs } from './spec-runner/load';
-import { rowLabel, rowPhrases } from './spec-runner/parse';
-import { assertPhrasesResolve } from './spec-runner/validate';
+import { loadSpecs } from '../spec-runner/load';
+import { rowLabel, rowPhrases } from '../spec-runner/parse';
+import { assertPhrasesResolve } from '../spec-runner/validate';
+import { registry } from './steps';
 
 const features = loadSpecs();
 

@@ -26,11 +26,8 @@ export default defineConfig({
         test: {
           name: 'component',
           environment: 'jsdom',
-          setupFiles: [
-            './src/test-setup.ts',
-            './tests/component-steps/index.ts',
-          ],
-          include: ['tests/component.spec.ts'],
+          setupFiles: ['./src/test-setup.ts', './tests/component/setup.ts'],
+          include: ['tests/component/component.spec.ts'],
         },
       },
     ],

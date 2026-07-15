@@ -1,5 +1,5 @@
 import { expect, type Page } from '@playwright/test';
-import { createRegistry } from '../../tests/spec-runner/registry';
+import { createRegistry } from '../spec-runner/registry';
 
 type Ctx = { page: Page };
 
