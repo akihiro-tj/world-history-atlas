@@ -11,7 +11,7 @@
 | `pnpm e2e` / `pnpm e2e:smoke` | E2E テスト（Playwright。smoke は `@smoke` のみ） |
 | `pnpm typecheck` / `pnpm lint` / `pnpm format` | tsc / Biome check / Biome format |
 | `pnpm validate-data` | テーマデータの検証 |
-| `pnpm check-specs` | 観点表の枠の網羅・参照整合の検査 |
+| `pnpm check-specs` | 観点表の層・期待・別層ポインタの検査 |
 | `pnpm tiles:build` | ベースマップ PMTiles の再生成（`nix develop -c pnpm tiles:build`） |
 | `pnpm build` | validate-data + typecheck + vite build |
 | `pnpm deploy:cf` | ビルドして Cloudflare Workers にデプロイ |
@@ -33,9 +33,9 @@
 ## テスト仕様書（specs/）
 
 - テスト仕様は「実行可能な観点表」。機能ごとの `specs/<機能>.md` が唯一の一次情報で、人間がレビューする唯一の定常対象。ランナーが表を直接実行するため、仕様からテストへの変換・生成工程は存在しない
-- すべての表は 状態（Given）→ 操作（When）→ 期待（Then）で読む。表は 2 形式: 軸マトリクス表（`## A × B`、列 `状態（A） | 操作（B） | 期待`、セルは軸の値で MECE を確認）と単発表（`# | 観点 | 状態 | 操作 | 期待 | 層 | 備考`）
+- すべての表は `| 観点 | 状態 | 操作 | 期待 | 層 |` の 1 形式。状態（Given）→ 操作（When）→ 期待（Then）で読み、セルにフレーズを直接書く。組み合わせ観点は `観点` を `A × B` の組ラベルにし、網羅は人が目視で確認する
 - 機能の追加・変更は「AI が specs/GUIDELINE.md に従って観点表を差分更新 → 人間が diff をレビュー → 機械検査（フレーズ束縛 + check-specs）→ CI」の順で進める
-- 層の境界は技術基準のみ: e2e = jsdom で検証できないもの（実 MapLibre 描画・実ビューポートのレイアウト・実リロード）/ c = 画面の状態遷移・モジュール連携（地図はモック）/ unit・直接 = 純ロジック等（ポインタ参照）。同じ振る舞いを 2 層で検証しない
+- 層の境界は技術基準のみ: e2e = jsdom で検証できないもの（実 MapLibre 描画・実ビューポートのレイアウト・実リロード）/ 結合 = 画面の状態遷移・モジュール連携（地図はモック）。同じ振る舞いを 2 層で検証しない。純ロジック等の非実行検証は表に混ぜず、`## 別層で検証`（ポインタ）・`## 対象外`（理由）に散文で書く
 - セルは既存フレーズのみで書く（E2E: `e2e/steps/`、component: `tests/component-steps/`）。新しい操作が必要なときだけフレーズ実装を追加し、その diff は人間が検収する。書式・導出手順は specs/GUIDELINE.md
 
 ## データ作成（public/data/themes/）
