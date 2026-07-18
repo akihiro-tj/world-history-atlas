@@ -11,7 +11,7 @@
     {
       devShells = forAllSystems (pkgs: {
         default = pkgs.mkShell {
-          packages = [ pkgs.tippecanoe pkgs.gdal pkgs.curl pkgs.unzip pkgs.nodejs_24 pkgs.pnpm ];
+          packages = [ pkgs.tippecanoe pkgs.gdal pkgs.curl pkgs.unzip ];
         };
       });
     };
